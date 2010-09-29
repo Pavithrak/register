@@ -39,7 +39,7 @@ public class HibernateRegisterDAO implements RegisterDAO {
 	}
 
 	public Register getRegister(Integer registerId) {
-		return (Register) sessionFactory.getCurrentSession().load(Register.class, registerId);
+		return (Register) getCurrentSession().load(Register.class, registerId);
 	}
 
 	public Register saveRegister(Register register) {
@@ -53,11 +53,11 @@ public class HibernateRegisterDAO implements RegisterDAO {
 
 	@SuppressWarnings("unchecked")
 	public List<RegisterType> getRegisterTypes() {
-		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(RegisterType.class);
+		Criteria criteria = getCurrentSession().createCriteria(RegisterType.class);
 		return criteria.list();
 	}
 
 	public RegisterType getRegisterType(Integer id) {
-		return (RegisterType) sessionFactory.getCurrentSession().load(RegisterType.class, id);
+		return (RegisterType) getCurrentSession().load(RegisterType.class, id);
 	}
 }
