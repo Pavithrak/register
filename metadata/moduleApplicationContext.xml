@@ -69,4 +69,14 @@
         <property name="closeDialogView"><value>/module/htmlformentry/closeDialog</value></property>
         <property name="successView"><value>registerHtmlForm.form</value></property>
     </bean>
+
+    <bean id="sessionFactory" class="org.openmrs.api.db.hibernate.HibernateSessionFactoryBean">
+		<property name="configLocations">
+			<list>
+				<value>classpath:hibernate.cfg.xml</value>
+				<value>classpath:hibernate.extended.cfg.xml</value>
+			</list>
+		</property>
+		<!--  default properties must be set in the hibernate.default.properties -->
+	</bean>
 </beans>
