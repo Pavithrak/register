@@ -143,16 +143,8 @@
         <h3></h3>
         	
         	<table cellspacing="0" cellpadding="2" style="width: 100%;" class="openmrsSearchTable">
-        	<thead>
-        	
-        		<tr>
-        		<th>Encounter Id</th>
-        		<th>Encounter Type</th>
-        		<th>Form Name</th>
-        		<th>Person Name</th>
-        		<th>Provider Name</th>
-        		<th>Encounter Date</th>
-        		</tr></thead>
+        		<thead id="searchresultheaders">
+			</thead>
         		<tbody id="Searchresult">
         		</tbody>
         	</table>
@@ -182,12 +174,39 @@ fillDataInTable = function(data){
 	loadDataForPagination();
 }
 
+function addHeaders(headerRawData){
+	headerData = {'headerHtml' : "", 'headerKeys' : []};
+    $j.each(headerRawData, function(key, value){
+   		headerData['headerKeys'][headerData['headerKeys'].length] = key;
+   		headerData['headerHtml'] += '<th>' + value + '</th>';
+    });
+	return headerData;
+}
+
+function addRegistryRows(keys, registryRowData){
+	var html = "";
+	$j.each(keys, function(index, key){
+		var value = typeof(registryRowData[key]) == 'undefined' ? "" : registryRowData[key];
+	    html += '<td>' + value + '</td>';						    
+	}) 	
+	return html;
+}
+
 	function pageSelectCallback(page_index, jq){
 	
 				var items_per_page = $j('#noOfItems').val();
 		       // Get number of elements per pagionation page from form
-                var requiredDataFromJson = ["encounterId","encounterType","formName","personName","providerName","encounterDateString"];
-                var max_elem = Math.min((page_index+1) * items_per_page, registerEntries.length);
+		       var headerKeys = [];
+		       var tableHeaderHtml = "<tr>";
+		       headerData = addHeaders(registerEntries['headers']);
+		       tableHeaderHtml += headerData['headerHtml'];
+		       headerKeys = headerData['headerKeys'];
+		       headerData = addHeaders(registerEntries['obsHeaders']);
+		       tableHeaderHtml += headerData['headerHtml'];
+		       var obsHeaderKeys = headerData['headerKeys'];
+		       
+		       tableHeaderHtml += '</tr>';
+                var max_elem = Math.min((page_index+1) * items_per_page, registerEntries['registerViewResults'].length);
                 var newcontent = '';
                 
                 // Iterate through a selection of the content and build an HTML string
@@ -197,10 +216,8 @@ fillDataInTable = function(data){
 	                for(var i = startingIndex; i<max_elem; i++)
 	                {
 	                	newcontent += '<tr class="'+rowStyle+'">' ;
-						$j.each(requiredDataFromJson, function(key,value){
-						    newcontent += '<td>' + registerEntries[i][value] + '</td>';
-						    
-						})                	
+	                	newcontent += addRegistryRows(headerKeys, registerEntries['registerViewResults'][i]);
+	                	newcontent += addRegistryRows(obsHeaderKeys, registerEntries['registerViewResults'][i]['observations']);
 	                	newcontent += '</tr>' ;
 	                	if(rowStyle == 'oddRow'){
 	                    	rowStyle = 'evenRow';
@@ -214,9 +231,10 @@ fillDataInTable = function(data){
                 }
                 
                 // Replace old content with new content
+                $j('#searchresultheaders').html(tableHeaderHtml);
                 $j('#Searchresult').html(newcontent);
-                if(registerEntries && registerEntries.length >0){
-                	$j('.locationBoxNav').html("Viewing <b>" + (startingIndex+1)+ "-" + max_elem + "</b> of <b>" + registerEntries.length + "</b>");
+                if(registerEntries['registerViewResults'] && registerEntries['registerViewResults'].length >0){
+                	$j('.locationBoxNav').html("Viewing <b>" + (startingIndex+1)+ "-" + max_elem + "</b> of <b>" + registerEntries['registerViewResults'].length + "</b>");
                 }else{
                 	$j('.locationBoxNav').html("");
                 }
@@ -227,7 +245,7 @@ fillDataInTable = function(data){
             var loadDataForPagination = function(){
 				// Create pagination element with options from form
 				var optInit =  {callback: pageSelectCallback, num_display_entries:0,items_per_page:$j('#noOfItems').val(),prev_text:'Previous Results',next_text:'Next Results',prev_show_always:true,next_show_always:true};				
-                $j("#searchNav").pagination(registerEntries.length, optInit);
+                $j("#searchNav").pagination(registerEntries['registerViewResults'].length, optInit);
                 
             }
             //When document has loaded, initialize pagination and form 

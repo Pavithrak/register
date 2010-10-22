@@ -76,8 +76,10 @@
 	</dwr>
 	-->
 	
-		<dwr>
+	<dwr>
 		<allow>
+			<convert converter="bean" match="org.openmrs.module.register.web.dwr.RegisterEntry"/>
+			<convert converter="bean" match="org.openmrs.module.register.web.dwr.RegisterViewResult"/>
 			<create creator="new" javascript="DWRRegisterService">
 				<param name="class" value="org.openmrs.module.register.web.dwr.DWRRegisterService"/>
 				<include method="getRegisterEntriesByLocation"/>
