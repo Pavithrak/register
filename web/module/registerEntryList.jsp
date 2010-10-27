@@ -126,12 +126,16 @@
 	</div>
 	
 	<input type="hidden" id="registerId" value='<c:out value="${param.registerId}"/>'/>
+	
+	<input type="hidden" id="htmlFormId" value='<c:out value="${commandMap.map['htmlFormId']}"/>'/>
+	
+	
 	<br style="clear:both;" />
 	<table width="100%">
 		<tbody id="searchInfoBar" >			
 			<tr>
 				<td align="left">
-			        	Show <select id="noOfItems"   onChange="loadDataForPagination();"><option value="2">20</option><option value="5">50</option><option value="7">100</option></select> entries
+			        	Show <select id="noOfItems"   onChange="loadDataForPagination();"><option value="2">2</option><option value="5">5</option><option value="7">10</option></select> entries
 			        </td>
 			        <td align="right">
 			        	<div class="locationBoxNav"></div>
@@ -167,7 +171,7 @@ $j('#locationId').change(function() {
 });
 
 function reloadView(){
-	DWRRegisterService.getRegisterEntriesByLocation($j('#registerId').val(), $j('#locationId').val(),fillDataInTable);
+	DWRRegisterService.getRegisterEntriesByLocation($j('#registerId').val(), $j('#locationId').val(),$j('#htmlFormId').val(),fillDataInTable);
 }
 fillDataInTable = function(data){
 	registerEntries = data;

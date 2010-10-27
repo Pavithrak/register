@@ -21,6 +21,7 @@ import org.openmrs.Location;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.register.RegisterService;
+import org.openmrs.module.register.db.hibernate.Register;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,7 +37,6 @@ public class RegisterEntryListController {
 
 	private static final String REGISTER_ENTRY_FORM_VIEW = "/module/register/registerEntryList";
 
-	
 	/**
 	 * Initially called after the formBackingObject method to get the landing
 	 * form name
@@ -48,18 +48,16 @@ public class RegisterEntryListController {
 		return REGISTER_ENTRY_FORM_VIEW;
 	}
 
-	/*@ModelAttribute("locations")
-	protected List<Location> formBackingObject() throws Exception {
-		return getLocations();
-	}*/
-	
 	@ModelAttribute("commandMap")
-	protected CommandMap formBackingObject(@RequestParam(required=true, value="registerId") Integer registerId,@RequestParam(required=false, value="htmlFormId") Integer htmlFormId) throws Exception {
-			RegisterService registerService = Context.getService(RegisterService.class);
-			CommandMap commandMap = new CommandMap();
-			commandMap.addToMap("locations", getLocations());
-			commandMap.addToMap("register", registerService.getRegister(registerId));
-		
+	protected CommandMap formBackingObject(@RequestParam(required = true, value = "registerId")
+	Integer registerId, @RequestParam(required = false, value = "htmlFormId")
+	Integer htmlFormId) throws Exception {
+		RegisterService registerService = Context.getService(RegisterService.class);
+		Register register = registerService.getRegister(registerId);
+		CommandMap commandMap = new CommandMap();
+		commandMap.addToMap("locations", getLocations());
+		commandMap.addToMap("register", register);
+		commandMap.addToMap("htmlFormId", register.getHtmlForm().getId());
 		return commandMap;
 	}
 
@@ -67,10 +65,5 @@ public class RegisterEntryListController {
 		LocationService locationService = (LocationService) Context.getService(LocationService.class);
 		return locationService.getAllLocations();
 	}
-	
-	
 
-
-	
-		
 }

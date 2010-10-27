@@ -17,6 +17,7 @@
 
 	<require_modules>
 		<require_module>org.openmrs.module.htmlformentry</require_module>
+		<require_module>org.openmrs.module.ui.springmvc</require_module>
 	</require_modules>
 
 	<!-- Extensions -->
@@ -89,7 +90,7 @@
 		<signatures>
 			<![CDATA[
 				import org.openmrs.module.register.web.dwr.DWRRegisterService;
-				DWRRegisterService.getRegisterEntriesByLocation(int registerId, int locationId);
+				DWRRegisterService.getRegisterEntriesByLocation(int registerId, int locationId, int htmlFormId);
 			]]>
 		</signatures>
 	</dwr>

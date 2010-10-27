@@ -47,5 +47,6 @@
 	<classpathentry kind="lib" path="lib-common/openmrs-api-1.8.0-SNAPSHOT-tests.jar"/>
 	<classpathentry kind="lib" path="lib-common/openmrs-web-1.8.0-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="lib-common/openmrs-web-1.8.0-SNAPSHOT-tests.jar"/>
+	<classpathentry kind="lib" path="lib-common/ui/ui.springmvc-0.2.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>
