@@ -86,9 +86,9 @@
 			</b>
 			<div class="box">
 				<div dojoType="PatientSearch" widgetId="pSearch"
-					showIncludeVoided="true"
+					showIncludeVoided="false"
 					searchLabel="<spring:message code="Patient.searchBox" htmlEscape="true"/>"
-					showVerboseListing="true"
+					showVerboseListing="false"
 					patientId='<request:parameter name="patientId"/>'
 					searchPhrase='<request:parameter name="phrase"/>'
 					showAddPatientLink='false'
@@ -135,7 +135,7 @@
 		<tbody id="searchInfoBar" >			
 			<tr>
 				<td align="left">
-			        	Show <select id="noOfItems"   onChange="loadDataForPagination();"><option value="2">2</option><option value="5">5</option><option value="7">10</option></select> entries
+			        	Show <select id="noOfItems"   onChange="loadDataForPagination();"><option value="2">2</option><option value="5">5</option><option value="10">10</option></select> entries
 			        </td>
 			        <td align="right">
 			        	<div class="locationBoxNav"></div>
