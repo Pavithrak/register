@@ -30,12 +30,10 @@ public class DWRRegisterService {
 		
 		RegisterViewResult registerViewResult = new RegisterViewResult();
 		
+		registerViewResult.addHeader("encounterDate", "Encounter Date");
 		registerViewResult.addHeader("personName", "Person Name");
 		registerViewResult.addHeader("gender", "Gender");
 		registerViewResult.addHeader("dateOfBirth", "Birth Date");
-		registerViewResult.addHeader("encounterId", "Encounter Id");
-		registerViewResult.addHeader("encounterDate", "Encounter Date");
-		registerViewResult.addHeader("encounterLocation", "Encounter Location");
 		
 		for (Encounter encounter : encounters) {
 			registerViewResult.addRegisterViewResult(new RegisterEntry(encounter));
