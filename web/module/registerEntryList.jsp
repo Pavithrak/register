@@ -196,64 +196,64 @@ function addRegistryRows(keys, registryRowData){
 	return html;
 }
 
-	function pageSelectCallback(page_index, jq){
-	
-				var items_per_page = $j('#noOfItems').val();
-		       // Get number of elements per pagionation page from form
-		       var headerKeys = [];
-		       var tableHeaderHtml = "<tr>";
-		       headerData = addHeaders(registerEntries['headers']);
-		       tableHeaderHtml += headerData['headerHtml'];
-		       headerKeys = headerData['headerKeys'];
-		       headerData = addHeaders(registerEntries['obsHeaders']);
-		       tableHeaderHtml += headerData['headerHtml'];
-		       var obsHeaderKeys = headerData['headerKeys'];
-		       
-		       tableHeaderHtml += '</tr>';
-                var max_elem = Math.min((page_index+1) * items_per_page, registerEntries['registerViewResults'].length);
-                var newcontent = '';
-                
-                // Iterate through a selection of the content and build an HTML string
-                var rowStyle = "oddRow" ;
-                var startingIndex=(page_index*items_per_page);
-                if(max_elem > 0){
-	                for(var i = startingIndex; i<max_elem; i++)
-	                {
-	                	newcontent += '<tr class="'+rowStyle+'">' ;
-	                	newcontent += addRegistryRows(headerKeys, registerEntries['registerViewResults'][i]);
-	                	newcontent += addRegistryRows(obsHeaderKeys, registerEntries['registerViewResults'][i]['observations']);
-	                	newcontent += '</tr>' ;
-	                	if(rowStyle == 'oddRow'){
-	                    	rowStyle = 'evenRow';
-	                	}else{
-	                		rowStyle = 'oddRow';
-	                	}
-	                }
-                }
-                else{
-                	newcontent += '<tr class="'+rowStyle+'">' + '<td> No records found. </td> </tr>';;
-                }
-                
-                // Replace old content with new content
-                $j('#searchresultheaders').html(tableHeaderHtml);
-                $j('#Searchresult').html(newcontent);
-                if(registerEntries['registerViewResults'] && registerEntries['registerViewResults'].length >0){
-                	$j('.locationBoxNav').html("Viewing <b>" + (startingIndex+1)+ "-" + max_elem + "</b> of <b>" + registerEntries['registerViewResults'].length + "</b>");
-                }else{
-                	$j('.locationBoxNav').html("");
-                }
-                // Prevent click event propagation
-                return false;
+function pageSelectCallback(page_index, jq){
+
+	 var items_per_page = $j('#noOfItems').val();
+     // Get number of elements per pagionation page from form
+     var headerKeys = [];
+     var tableHeaderHtml = "<tr>";
+     headerData = addHeaders(registerEntries['headers']);
+     tableHeaderHtml += headerData['headerHtml'];
+     headerKeys = headerData['headerKeys'];
+     headerData = addHeaders(registerEntries['obsHeaders']);
+     tableHeaderHtml += headerData['headerHtml'];
+     var obsHeaderKeys = headerData['headerKeys'];
+     
+     tableHeaderHtml += '</tr>';
+            var max_elem = Math.min((page_index+1) * items_per_page, registerEntries['registerViewResults'].length);
+            var newcontent = '';
+            
+            // Iterate through a selection of the content and build an HTML string
+            var rowStyle = "oddRow" ;
+            var startingIndex=(page_index*items_per_page);
+            if(max_elem > 0){
+             for(var i = startingIndex; i<max_elem; i++)
+             {
+             	newcontent += '<tr class="'+rowStyle+'">' ;
+             	newcontent += addRegistryRows(headerKeys, registerEntries['registerViewResults'][i]);
+             	newcontent += addRegistryRows(obsHeaderKeys, registerEntries['registerViewResults'][i]['observations']);
+             	newcontent += '</tr>' ;
+             	if(rowStyle == 'oddRow'){
+                 	rowStyle = 'evenRow';
+             	}else{
+             		rowStyle = 'oddRow';
+             	}
+             }
+            }
+            else{
+            	newcontent += '<tr class="'+rowStyle+'">' + '<td> No records found. </td> </tr>';;
             }
             
-            var loadDataForPagination = function(){
-				// Create pagination element with options from form
-				var optInit =  {callback: pageSelectCallback, num_display_entries:0,items_per_page:$j('#noOfItems').val(),prev_text:'Previous Results',next_text:'Next Results',prev_show_always:true,next_show_always:true};				
-                $j("#searchNav").pagination(registerEntries['registerViewResults'].length, optInit);
-                
+            // Replace old content with new content
+            $j('#searchresultheaders').html(tableHeaderHtml);
+            $j('#Searchresult').html(newcontent);
+            if(registerEntries['registerViewResults'] && registerEntries['registerViewResults'].length >0){
+            	$j('.locationBoxNav').html("Viewing <b>" + (startingIndex+1)+ "-" + max_elem + "</b> of <b>" + registerEntries['registerViewResults'].length + "</b>");
+            }else{
+            	$j('.locationBoxNav').html("");
             }
-            //When document has loaded, initialize pagination and form 
-            $j(document).ready(loadDataForPagination);            
+            // Prevent click event propagation
+            return false;
+ }
+        
+    var loadDataForPagination = function(){
+		// Create pagination element with options from form
+		var optInit =  {callback: pageSelectCallback, num_display_entries:0,items_per_page:$j('#noOfItems').val(),prev_text:'Previous Results',next_text:'Next Results',prev_show_always:true,next_show_always:true};				
+          $j("#searchNav").pagination(registerEntries['registerViewResults'].length, optInit);
+	}
+
+ //When document has loaded, initialize pagination and form 
+ $j(document).ready(loadDataForPagination);            
             
 
 </script>
