@@ -21,6 +21,10 @@
 
 	<!-- Extensions -->
 	<extension>
+		<point>org.openmrs.admin.list</point>
+		<class>org.openmrs.module.register.extension.html.RegisterAdminList</class>
+	</extension>
+	<extension>
 		<point>org.openmrs.gutter.tools</point>
 		<class>org.openmrs.module.register.extension.html.NavigationLinkExt</class>
 	</extension>
@@ -71,6 +75,25 @@
 		</signatures>
 	</dwr>
 	-->
+	
+	<dwr>
+		<allow>
+			<convert converter="bean" match="org.openmrs.module.register.web.dwr.RegisterEntry"/>
+			<convert converter="bean" match="org.openmrs.module.register.web.dwr.RegisterViewResult"/>
+			<create creator="new" javascript="DWRRegisterService">
+				<param name="class" value="org.openmrs.module.register.web.dwr.DWRRegisterService"/>
+				<include method="getRegisterEntriesByLocation"/>
+			</create>
+		</allow>
+
+		<signatures>
+			<![CDATA[
+				import org.openmrs.module.register.web.dwr.DWRRegisterService;
+				DWRRegisterService.getRegisterEntriesByLocation(int registerId, int locationId, int htmlFormId);
+			]]>
+		</signatures>
+	</dwr>
+	
                     `
 	<!-- Servlets -->
 	<!-- Accessed through the url /pageContext()/moduleServlet/<moduleId>/<servlet-name>

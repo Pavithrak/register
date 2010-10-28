@@ -13,23 +13,51 @@
  */
 package org.openmrs.module.register;
 
+import org.springframework.transaction.annotation.Transactional;
+import org.openmrs.Encounter;
+import org.openmrs.annotation.Authorized;
+
 import org.openmrs.module.register.db.hibernate.Register;
 import org.openmrs.module.register.db.hibernate.RegisterType;
 
 import java.util.List;
 
 public interface RegisterService {
-    public List<Register> getRegisters();
 
+	@Transactional(readOnly = true)
+	@Authorized( { RegisterConstant.VIEW_REGISTERS })
+	public List<Register> getRegisters();
+	
+	@Transactional(readOnly = true)
+	@Authorized( { RegisterConstant.VIEW_REGISTERS })	
+    List<Register> getRegisters(boolean includeRetired);
+
+	@Transactional(readOnly = true)
+	@Authorized( { RegisterConstant.VIEW_REGISTERS })
 	public Register getRegister(Integer registerId);
+	
+	@Transactional
+	@Authorized( { RegisterConstant.MANAGE_REGISTERS })
+	public Register saveRegister(Register register);
 
-    public Register saveRegister(Register register);
-    
-    public void deleteRegister(Integer registerId);
-    
-    public void deleteRegister(Register register);
-    
-    public List<RegisterType> getRegisterTypes();
-    
-    public RegisterType getRegisterType(Integer registerTypeId);
+	@Transactional
+	@Authorized( { RegisterConstant.MANAGE_REGISTERS })
+	public void deleteRegister(Integer registerId);
+
+	@Transactional
+	@Authorized( { RegisterConstant.MANAGE_REGISTERS })
+	public void deleteRegister(Register register);
+
+	@Transactional(readOnly = true)
+	@Authorized( { RegisterConstant.VIEW_REGISTERS })
+	public List<RegisterType> getRegisterTypes();
+
+	@Transactional(readOnly = true)
+	@Authorized( { RegisterConstant.VIEW_REGISTERS })
+	public RegisterType getRegisterType(Integer registerTypeId);
+	
+	@Transactional(readOnly = true)
+	@Authorized( { RegisterConstant.VIEW_REGISTERS })
+	public List<Encounter> getEncountersForRegisterByLocation(Integer registerId ,Integer locationId);
+
 }

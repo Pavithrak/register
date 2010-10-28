@@ -16,9 +16,9 @@ package org.openmrs.module.register.db.hibernate;
 import java.util.List;
 
 import org.hibernate.Criteria;
-import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.hibernate.classic.Session;
+import org.hibernate.criterion.Restrictions;
 import org.openmrs.module.register.db.RegisterDAO;
 
 public class HibernateRegisterDAO implements RegisterDAO {
@@ -33,9 +33,12 @@ public class HibernateRegisterDAO implements RegisterDAO {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Register> getRegisters() {
-		Query query = getCurrentSession().createQuery("from Register register order by date_changed desc, date_created desc");
-		return query.list();
+	public List<Register> getRegisters(boolean includeRetired) {
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Register.class);
+		if(!includeRetired){
+			criteria.add(Restrictions.eq("retired", false));
+		}
+		return criteria.list();
 	}
 
 	public Register getRegister(Integer registerId) {
