@@ -25,12 +25,12 @@ import org.openmrs.web.dwr.EncounterListItem;
 public class DWRRegisterService {
 	protected final Log log = LogFactory.getLog(getClass());
 	
-	public RegisterViewResult getRegisterEntriesByLocation(int registerId, int locationId, int htmlFormId) {
+	public RegisterViewResult getRegisterEntriesByLocation(int registerId, int locationId, int htmlFormId,int pageSize,int page) {
 
 		RegisterService registerService = Context.getService(RegisterService.class);
 		HtmlFormEntryService htmlFormEntryService = Context.getService(HtmlFormEntryService.class);
 		HtmlForm htmlForm = htmlFormEntryService.getHtmlForm(htmlFormId);
-		List<Encounter> encounters = registerService.getEncountersForRegisterByLocation(registerId, locationId);
+		List<Encounter> encounters = registerService.getEncountersForRegisterByLocation(registerId, locationId,pageSize,page);
 		List<EncounterListItem> encounterListItems = new Vector<EncounterListItem>();
 		for (Encounter encounter : encounters) {
 			encounterListItems.add(new EncounterListItem(encounter));
@@ -88,6 +88,15 @@ public class DWRRegisterService {
 		else {
 			log.debug(field.getClass() + " not yet implemented");
 		}
+		
+		
+		
+	}
+
+	public int getRegisterEntryCount(int registerId, int locationId) {
+
+		RegisterService registerService = Context.getService(RegisterService.class);
+		return registerService.getEncounterCountForRegisterByLocation(registerId, locationId).intValue();
 	}
 
 }

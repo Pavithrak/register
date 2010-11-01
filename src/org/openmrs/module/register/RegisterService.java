@@ -58,6 +58,9 @@ public interface RegisterService {
 	
 	@Transactional(readOnly = true)
 	@Authorized( { RegisterConstant.VIEW_REGISTERS })
-	public List<Encounter> getEncountersForRegisterByLocation(Integer registerId ,Integer locationId);
+	public List<Encounter> getEncountersForRegisterByLocation(Integer registerId ,Integer locationId,Integer pageSize,Integer page);
 
+	@Transactional(readOnly = true)
+	@Authorized( { RegisterConstant.VIEW_REGISTERS })
+	public Integer getEncounterCountForRegisterByLocation(Integer registerId, Integer locationId) ;
 }
