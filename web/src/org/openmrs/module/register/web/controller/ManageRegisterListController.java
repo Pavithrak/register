@@ -13,11 +13,6 @@
  */
 package org.openmrs.module.register.web.controller;
 
-import java.util.List;
-
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.APIException;
@@ -33,6 +28,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.context.request.WebRequest;
+
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.util.List;
 
 @Controller
 @RequestMapping(value = "module/register/manageRegister.list")
@@ -82,10 +81,11 @@ public class ManageRegisterListController {
 
 			for (String id : registerIds) {
 				try {
-					registerService.deleteRegister(new Integer(id));
+                    Register deleteRegister = registerService.getRegister(new Integer(id));
+                    registerService.deleteRegister(new Integer(id));
 					if (!success.equals(""))
 						success += "<br/>";
-					success += id + " " + deleted;
+					success += deleteRegister.getName() + " " + deleted;
 				} catch (DataIntegrityViolationException e) {
 					error = handleRegisterIntegrityException(e, error, notDeleted);
 				} catch (APIException e) {
