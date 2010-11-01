@@ -256,7 +256,7 @@ function addRegistryRows(keys, registryRowData){
 	return html;
 }
 
-	function constructRegisterTable(){
+function constructRegisterTable(){
 	
 			var page_index = $j('#currentPage').val();
 			var items_per_page = $j('#noOfItems').val();
@@ -306,9 +306,9 @@ function addRegistryRows(keys, registryRowData){
                 // Prevent click event propagation
                 return false;
             }
-            
+    
+           $j(document).ready(showRegisterContent);       
 
-            $j(document).ready(showRegisterContent);            
             
 
 </script>
