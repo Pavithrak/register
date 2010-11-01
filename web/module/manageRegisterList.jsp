@@ -74,7 +74,7 @@
 
     function showDialog() {
         if ($j(".registers").is(':checked')) {
-            if (confirm("Are you sure to delete the selected Registers ?")) {
+            if (confirm('<spring:message code="register.confirm.delete"/>')) {
                 $j("#target").submit();
             }
         }
