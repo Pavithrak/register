@@ -106,7 +106,7 @@ public class RegisterServiceTest extends BaseModuleContextSensitiveTest {
 
     @Test
     public void shouldReturnTheCorrespondingEncounters() {
-        List<Encounter> encounters = service.getEncountersForRegisterByLocation(111, 1);
+        List<Encounter> encounters = service.getEncountersForRegisterByLocation(111, 1,2,1);
         assertEquals(2,encounters.size());
     }
 
