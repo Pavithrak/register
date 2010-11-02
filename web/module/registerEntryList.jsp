@@ -9,6 +9,9 @@
 	<iframe id="displayAddRegisterEntryPopupIframe" width="100%" height="100%" marginWidth="0" marginHeight="0" frameBorder="0" scrolling="auto"></iframe>
 </div>
 
+<link href="/openmrs/scripts/jquery/dataTables/css/dataTables.css?v=1.8.0.0" type="text/css" rel="stylesheet" />
+
+
 <script type="text/javascript">
 	$j(document).ready(function() {
 		$j('#displayAddRegisterEntryPopup').dialog({
@@ -134,20 +137,19 @@
 	
 	<br style="clear:both;" />
 	<div id="registerContents">
-	<table width="100%">
-		<tbody id="searchInfoBar" >			
+		<table width="100%">
+			<tbody id="searchInfoBar" >			
 			<tr>
 				<td align="left">
-			        	Show <select id="noOfItems"   onChange="reloadView();"><option value="2">2</option><option value="5">5</option><option value="10">10</option></select> entries
+			        	Show <select id="noOfItems"   onChange="pageSizeChange();"><option value="2">2</option><option value="5">5</option><option value="10">10</option></select> entries
 			        </td>
-			        <td align="right">
-			        	<div class="locationBoxNav"></div>
+			        <td align="right">	        	
 			        </td>
 		        </tr>
-	        </tbody>
-       </table>	
+	        	</tbody>
+       		</table>	
        
-        <h3></h3>
+        	<h3></h3>
         	
         	<table cellspacing="0" cellpadding="2" style="width: 100%;" class="openmrsSearchTable">
         		<thead id="searchresultheaders">
@@ -155,11 +157,12 @@
         		<tbody id="Searchresult">
         		</tbody>
         	</table>
-	<div id="searchNav" align="center" style="padding: 9px;">
-		<a id='previous' href="javascript:void(0)" onClick="previousPage();">Previous
-		</a>
-		<a id='next' href="javascript:void(0)" onClick="nextPage();">Next</a>
-	</div>
+        	
+        	<div id="locationBoxNav" class="dataTables_info"></div>
+		<div id="searchNav" align="center" style="padding: 15px;">
+			<div id='previous'  align="center" class="paginate_enabled_previous" onClick="previousPage();"></div>
+			<div id='next'  align="center" class="paginate_disabled_next"  onClick="nextPage();"></div>
+		</div>
 	</div>
 	
 </form>
@@ -177,17 +180,36 @@ var local_total_pages =1;
 
 $j('#locationId').change(function() {
 	items_per_page = $j('#noOfItems').val();
-	showRegisterContent();
+	showRegisterContent();	
 });
+
+
+function pageSizeChange(){
+	reloadView();
+	
+}
+
+
+function togglePaginationButtons(){
+	$j('#next').attr("class","paginate_disabled_next");
+	if(Number($j('#registerCount').val())<Number($j('#noOfItems').val())){
+		$j('#previous').attr("class","paginate_disabled_previous");
+	}else{
+		$j('#previous').attr("class","paginate_enabled_previous");
+	}
+}
 
 function nextPage() {
 	local_currentPage=Number($j('#currentPage').val());
 	local_total_pages=Number($j('#total_pages').val());
 	if(local_currentPage < local_total_pages){
-		
+		$j('#previous').attr("class","paginate_enabled_previous");
 		local_currentPage = Number(local_currentPage) + 1;
 		$j('#currentPage').val(local_currentPage);		
 		reloadViewData();
+	}
+	if(local_currentPage==local_total_pages){
+		$j('#next').attr("class","paginate_disabled_next");
 	}
 }
 
@@ -197,6 +219,9 @@ function previousPage() {
 		local_currentPage = local_currentPage - 1;
 		$j('#currentPage').val(local_currentPage);
 		reloadViewData();
+		$j('#next').attr("class","paginate_enabled_next");
+	}if(local_currentPage==1){
+		$j('#previous').attr("class","paginate_disabled_previous");
 	}
 }
 
@@ -207,6 +232,7 @@ local_total_pages = Math.ceil( $j('#registerCount').val()/ $j('#noOfItems').val(
 $j('#total_pages').val(local_total_pages);
 $j('#currentPage').val(local_total_pages);
 reloadViewData();
+togglePaginationButtons();
 }
 
 fillDataInTable = function(data){
@@ -299,9 +325,9 @@ function constructRegisterTable(){
                 if(registerEntries['registerViewResults'] && registerEntries['registerViewResults'].length >0){
                 	var start_index = ((page_index - 1) * items_per_page) + 1;
                 	var end_index = ((page_index - 1) * items_per_page)+ registerEntries['registerViewResults'].length;
-                	$j('.locationBoxNav').html("Viewing <b>" + start_index+ "-" + end_index+ "</b> of <b>" + $j('#registerCount').val() + "</b>");
+                	$j('#locationBoxNav').html("Viewing <b>" + start_index+ "-" + end_index+ "</b> of <b>" + $j('#registerCount').val() + "</b>");
                 }else{
-                	$j('.locationBoxNav').html("");
+                	$j('#locationBoxNav').html("");
                 }
                 // Prevent click event propagation
                 return false;
