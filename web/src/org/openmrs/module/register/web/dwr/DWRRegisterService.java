@@ -1,6 +1,7 @@
 package org.openmrs.module.register.web.dwr;
 
 import java.util.List;
+import java.util.Vector;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -17,28 +18,31 @@ import org.openmrs.module.htmlformentry.schema.HtmlFormSection;
 import org.openmrs.module.htmlformentry.schema.ObsField;
 import org.openmrs.module.htmlformentry.schema.ObsGroup;
 import org.openmrs.module.register.RegisterService;
+import org.openmrs.web.dwr.EncounterListItem;
 
 public class DWRRegisterService {
 	protected final Log log = LogFactory.getLog(getClass());
-	
-	public RegisterViewResult getRegisterEntriesByLocation(int registerId, int locationId, int htmlFormId) {
+
+	public RegisterViewResult getRegisterEntriesByLocation(int registerId, int locationId, int htmlFormId, int pageSize, int page) {
 
 		RegisterService registerService = Context.getService(RegisterService.class);
 		HtmlFormEntryService htmlFormEntryService = Context.getService(HtmlFormEntryService.class);
 		HtmlForm htmlForm = htmlFormEntryService.getHtmlForm(htmlFormId);
-		List<Encounter> encounters = registerService.getEncountersForRegisterByLocation(registerId, locationId);
-		
+		List<Encounter> encounters = registerService.getEncountersForRegisterByLocation(registerId, locationId, pageSize, page);
+		List<EncounterListItem> encounterListItems = new Vector<EncounterListItem>();
+		for (Encounter encounter : encounters) {
+			encounterListItems.add(new EncounterListItem(encounter));
+		}
 		RegisterViewResult registerViewResult = new RegisterViewResult();
-		
 		registerViewResult.addHeader("encounterDate", "Encounter Date");
 		registerViewResult.addHeader("personName", "Person Name");
 		registerViewResult.addHeader("gender", "Gender");
 		registerViewResult.addHeader("dateOfBirth", "Birth Date");
-		
+
 		for (Encounter encounter : encounters) {
 			registerViewResult.addRegisterViewResult(new RegisterEntry(encounter));
 		}
-			
+
 		FormEntrySession fes;
 		try {
 			fes = new FormEntrySession(new Patient(), null, Mode.ENTER, htmlForm);
@@ -52,7 +56,7 @@ public class DWRRegisterService {
 		catch (Exception e) {
 			log.error(e);
 		}
-		return registerViewResult;		
+		return registerViewResult;
 	}
 
 	private void fieldHelper(HtmlFormField field, RegisterViewResult registerViewResult) {
@@ -72,6 +76,13 @@ public class DWRRegisterService {
 		else {
 			log.debug(field.getClass() + " not yet implemented");
 		}
+
+	}
+
+	public int getRegisterEntryCount(int registerId, int locationId) {
+
+		RegisterService registerService = Context.getService(RegisterService.class);
+		return registerService.getEncounterCountForRegisterByLocation(registerId, locationId).intValue();
 	}
 
 }

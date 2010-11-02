@@ -20,7 +20,7 @@
 				width: '95%',
 				modal: true,
 				open: function(a, b) {},
-				close: function() { reloadView(); }
+				close: function() { showRegisterContent(); }
 		});
 	});
 
@@ -76,7 +76,7 @@
 				</c:if>
 				searchWidget.inputNode.select();
 				changeClassProperty("description", "display", "none");
-				reloadView();
+				
 			});
 			
 		</script>
@@ -113,7 +113,7 @@
 					<spring:message code="register.location.list.title" />
 					<select name="locationId" id="locationId">
 						<option value="-1">
-							<spring:message code="register.location.all" />
+							<spring:message code="register.location.select" />
 						</option>
 						<c:forEach var="location" items="${commandMap.map['locations'] }">
 							<option value="${ location.locationId }">${ location.name }</option>
@@ -126,16 +126,19 @@
 	</div>
 	
 	<input type="hidden" id="registerId" value='<c:out value="${param.registerId}"/>'/>
+	<input type="hidden" id="htmlFormId" value='<c:out value="${commandMap.map['htmlFormId']}"/>'/>	
 	
-	<input type="hidden" id="htmlFormId" value='<c:out value="${commandMap.map['htmlFormId']}"/>'/>
-	
+	<input type="hidden" id="registerCount" value='1'/>	
+	<input type="hidden" id="currentPage" value='1'/>	
+	<input type="hidden" id="total_pages" value='1'/>	
 	
 	<br style="clear:both;" />
+	<div id="registerContents">
 	<table width="100%">
 		<tbody id="searchInfoBar" >			
 			<tr>
 				<td align="left">
-			        	Show <select id="noOfItems"   onChange="loadDataForPagination();"><option value="2">2</option><option value="5">5</option><option value="10">10</option></select> entries
+			        	Show <select id="noOfItems"   onChange="reloadView();"><option value="2">2</option><option value="5">5</option><option value="10">10</option></select> entries
 			        </td>
 			        <td align="right">
 			        	<div class="locationBoxNav"></div>
@@ -152,7 +155,12 @@
         		<tbody id="Searchresult">
         		</tbody>
         	</table>
-	<div id="searchNav" align="center" style="padding: 9px;"></div>
+	<div id="searchNav" align="center" style="padding: 9px;">
+		<a id='previous' href="javascript:void(0)" onClick="previousPage();">Previous
+		</a>
+		<a id='next' href="javascript:void(0)" onClick="nextPage();">Next</a>
+	</div>
+	</div>
 	
 </form>
 
@@ -161,21 +169,73 @@
 <openmrs:htmlInclude file="/dwr/util.js" />
 <openmrs:htmlInclude file="/dwr/interface/DWRRegisterService.js" />
 
-<openmrs:htmlInclude file="/moduleResources/register/jquery.pagination.js" />
-
 <script type="text/javascript">
 var registerEntries = {};
+var local_currentPage = 1;
+var items_per_page = $j('#noOfItems').val();
+var local_total_pages =1;
 
 $j('#locationId').change(function() {
-		reloadView();
+	items_per_page = $j('#noOfItems').val();
+	showRegisterContent();
 });
 
-function reloadView(){
-	DWRRegisterService.getRegisterEntriesByLocation($j('#registerId').val(), $j('#locationId').val(),$j('#htmlFormId').val(),fillDataInTable);
+function nextPage() {
+	local_currentPage=Number($j('#currentPage').val());
+	local_total_pages=Number($j('#total_pages').val());
+	if(local_currentPage < local_total_pages){
+		
+		local_currentPage = Number(local_currentPage) + 1;
+		$j('#currentPage').val(local_currentPage);		
+		reloadViewData();
+	}
 }
+
+function previousPage() {
+	local_currentPage=Number($j('#currentPage').val());
+	if(local_currentPage > 1){
+		local_currentPage = local_currentPage - 1;
+		$j('#currentPage').val(local_currentPage);
+		reloadViewData();
+	}
+}
+
+function reloadEntries(data){
+
+$j('#registerCount').val(data);
+local_total_pages = Math.ceil( $j('#registerCount').val()/ $j('#noOfItems').val());
+$j('#total_pages').val(local_total_pages);
+$j('#currentPage').val(local_total_pages);
+reloadViewData();
+}
+
 fillDataInTable = function(data){
 	registerEntries = data;
-	loadDataForPagination();
+	constructRegisterTable();
+}
+
+
+function reloadView(){
+
+	DWRRegisterService.getRegisterEntryCount($j('#registerId').val(),$j('#locationId').val(),reloadEntries);
+	
+	
+	
+}
+
+function reloadViewData(){
+
+	DWRRegisterService.getRegisterEntriesByLocation($j('#registerId').val(),$j('#locationId').val(),$j('#htmlFormId').val(),$j('#noOfItems').val(),$j('#currentPage').val(),fillDataInTable);
+}
+
+
+function showRegisterContent(){
+	if($j('#locationId').val()!=-1){
+	$j('#registerContents').show();
+	reloadView();
+	}else{
+		$j('#registerContents').hide();
+	}
 }
 
 function addHeaders(headerRawData){
@@ -196,64 +256,59 @@ function addRegistryRows(keys, registryRowData){
 	return html;
 }
 
-function pageSelectCallback(page_index, jq){
+function constructRegisterTable(){
+	
+			var page_index = $j('#currentPage').val();
+			var items_per_page = $j('#noOfItems').val();
+		       // Get number of elements per pagionation page from form
+		       var headerKeys = [];
+		       var tableHeaderHtml = "<tr>";
+		       headerData = addHeaders(registerEntries['headers']);
+		       tableHeaderHtml += headerData['headerHtml'];
+		       headerKeys = headerData['headerKeys'];
+		       headerData = addHeaders(registerEntries['obsHeaders']);
+		       tableHeaderHtml += headerData['headerHtml'];
+		       var obsHeaderKeys = headerData['headerKeys'];
+		       
+		       tableHeaderHtml += '</tr>';
+                var newcontent = '';
+                
+                // Iterate through a selection of the content and build an HTML string
+                var rowStyle = "oddRow" ;
+                if(items_per_page > 0){
+	                for(var i = 0; i < registerEntries['registerViewResults'].length; i++)
+	                {
+	                	newcontent += '<tr class="'+rowStyle+'">' ;
+	                	newcontent += addRegistryRows(headerKeys, registerEntries['registerViewResults'][i]);
+	                	newcontent += addRegistryRows(obsHeaderKeys, registerEntries['registerViewResults'][i]['observations']);
+	                	newcontent += '</tr>' ;
+	                	if(rowStyle == 'oddRow'){
+	                    	rowStyle = 'evenRow';
+	                	}else{
+	                		rowStyle = 'oddRow';
+	                	}
+	                }
+                }
+                else{
+                	newcontent += '<tr class="'+rowStyle+'">' + '<td> No records found. </td> </tr>';;
+                }
+                
+                // Replace old content with new content
+                $j('#searchresultheaders').html(tableHeaderHtml);
+                $j('#Searchresult').html(newcontent);
+                if(registerEntries['registerViewResults'] && registerEntries['registerViewResults'].length >0){
+                	var start_index = ((page_index - 1) * items_per_page) + 1;
+                	var end_index = ((page_index - 1) * items_per_page)+ registerEntries['registerViewResults'].length;
+                	$j('.locationBoxNav').html("Viewing <b>" + start_index+ "-" + end_index+ "</b> of <b>" + $j('#registerCount').val() + "</b>");
+                }else{
+                	$j('.locationBoxNav').html("");
+                }
+                // Prevent click event propagation
+                return false;
+            }
+    
+           $j(document).ready(showRegisterContent);       
 
-	 var items_per_page = $j('#noOfItems').val();
-     // Get number of elements per pagionation page from form
-     var headerKeys = [];
-     var tableHeaderHtml = "<tr>";
-     headerData = addHeaders(registerEntries['headers']);
-     tableHeaderHtml += headerData['headerHtml'];
-     headerKeys = headerData['headerKeys'];
-     headerData = addHeaders(registerEntries['obsHeaders']);
-     tableHeaderHtml += headerData['headerHtml'];
-     var obsHeaderKeys = headerData['headerKeys'];
-     
-     tableHeaderHtml += '</tr>';
-            var max_elem = Math.min((page_index+1) * items_per_page, registerEntries['registerViewResults'].length);
-            var newcontent = '';
-            
-            // Iterate through a selection of the content and build an HTML string
-            var rowStyle = "oddRow" ;
-            var startingIndex=(page_index*items_per_page);
-            if(max_elem > 0){
-             for(var i = startingIndex; i<max_elem; i++)
-             {
-             	newcontent += '<tr class="'+rowStyle+'">' ;
-             	newcontent += addRegistryRows(headerKeys, registerEntries['registerViewResults'][i]);
-             	newcontent += addRegistryRows(obsHeaderKeys, registerEntries['registerViewResults'][i]['observations']);
-             	newcontent += '</tr>' ;
-             	if(rowStyle == 'oddRow'){
-                 	rowStyle = 'evenRow';
-             	}else{
-             		rowStyle = 'oddRow';
-             	}
-             }
-            }
-            else{
-            	newcontent += '<tr class="'+rowStyle+'">' + '<td> No records found. </td> </tr>';;
-            }
-            
-            // Replace old content with new content
-            $j('#searchresultheaders').html(tableHeaderHtml);
-            $j('#Searchresult').html(newcontent);
-            if(registerEntries['registerViewResults'] && registerEntries['registerViewResults'].length >0){
-            	$j('.locationBoxNav').html("Viewing <b>" + (startingIndex+1)+ "-" + max_elem + "</b> of <b>" + registerEntries['registerViewResults'].length + "</b>");
-            }else{
-            	$j('.locationBoxNav').html("");
-            }
-            // Prevent click event propagation
-            return false;
- }
-        
-    var loadDataForPagination = function(){
-		// Create pagination element with options from form
-		var optInit =  {callback: pageSelectCallback, num_display_entries:0,items_per_page:$j('#noOfItems').val(),prev_text:'Previous Results',next_text:'Next Results',prev_show_always:true,next_show_always:true};				
-          $j("#searchNav").pagination(registerEntries['registerViewResults'].length, optInit);
-	}
-
- //When document has loaded, initialize pagination and form 
- $j(document).ready(loadDataForPagination);            
             
 
 </script>

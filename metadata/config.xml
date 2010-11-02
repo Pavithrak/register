@@ -83,13 +83,18 @@
 			<create creator="new" javascript="DWRRegisterService">
 				<param name="class" value="org.openmrs.module.register.web.dwr.DWRRegisterService"/>
 				<include method="getRegisterEntriesByLocation"/>
+				<include method="getRegisterEntryCount"/>
 			</create>
 		</allow>
 
 		<signatures>
 			<![CDATA[
 				import org.openmrs.module.register.web.dwr.DWRRegisterService;
-				DWRRegisterService.getRegisterEntriesByLocation(int registerId, int locationId, int htmlFormId);
+				DWRRegisterService.getRegisterEntriesByLocation(int registerId, int locationId, int htmlFormId,int pageSize,int page);
+			]]>
+			<![CDATA[
+				import org.openmrs.module.register.web.dwr.DWRRegisterService;
+				DWRRegisterService.getRegisterEntryCount(int registerId, int locationId);
 			]]>
 		</signatures>
 	</dwr>
