@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module configVersion="1.1">
+
+	<!-- Base Module Properties -->
+	<id>register</id>
+	<name>Register</name>
+	<version>1.0.0</version>
+	<package>org.openmrs.module.@MODULE_ID@</package>
+	<author>ThoughtWorks</author>
+	<description>
+			Create registers for the healthcare program 
+	</description>
+
+	<activator>@MODULE_PACKAGE@.RegisterModuleActivator</activator>
+
+	<require_version>1.6.0.11652</require_version>
+
+	<require_modules>
+		<require_module>org.openmrs.module.htmlformentry</require_module>
+	</require_modules>
+
+	<!-- Extensions -->
+	<extension>
+		<point>org.openmrs.admin.list</point>
+		<class>org.openmrs.module.register.extension.html.RegisterAdminList</class>
+	</extension>
+	<extension>
+		<point>org.openmrs.gutter.tools</point>
+		<class>org.openmrs.module.register.extension.html.NavigationLinkExt</class>
+	</extension>
+
+
+	<!-- AOP
+	<advice>
+		<point>org.openmrs.api.FormService</point>
+		<class>${modulePackage}.advice.DuplicateFormAdvisor</class>
+	</advice>
+	 /AOP -->
+
+
+	<!-- Required Privileges
+	<privilege>
+		<name>Form Entry</name>
+		<description>Allows user to access Form Entry pages/functions</description>
+	</privilege>
+	 /Required Privileges -->
+
+
+	<!-- Required Global Properties
+	<globalProperty>
+		<property>${moduleId}.someProperty</property>
+		<defaultValue></defaultValue>
+		<description>
+			A description of the global property goes here.  The description
+			should explain enough for administrators to understand the purpose
+			and possible values for the global property.
+		</description>
+	</globalProperty>
+	/Required Global Properties -->
+
+	<!--
+	<dwr>
+		<allow>
+			<create creator="new" javascript="DWRFormEntryService">
+				<param name="class" value="${modulePackage}.web.dwr.DWRFormEntryService"/>
+				<include method="enterForm"/>
+			</create>
+		</allow>
+
+		<signatures>
+			<![CDATA[
+			import ${modulePackage}.web.dwr.DWRFormEntryService;
+			DWRFormEntryService.enterForm(Integer patientId, Integer formId, boolean useEncounter, List<String> fields);
+			]]>
+		</signatures>
+	</dwr>
+	-->
+	
+	<dwr>
+		<allow>
+			<convert converter="bean" match="org.openmrs.module.register.web.dwr.RegisterEntry"/>
+			<convert converter="bean" match="org.openmrs.module.register.web.dwr.RegisterViewResult"/>
+			<create creator="new" javascript="DWRRegisterService">
+				<param name="class" value="org.openmrs.module.register.web.dwr.DWRRegisterService"/>
+				<include method="getRegisterEntriesByLocation"/>
+				<include method="getRegisterEntryCount"/>
+			</create>
+		</allow>
+
+		<signatures>
+			<![CDATA[
+				import org.openmrs.module.register.web.dwr.DWRRegisterService;
+				DWRRegisterService.getRegisterEntriesByLocation(int registerId, int locationId, int htmlFormId,int pageSize,int page);
+			]]>
+			<![CDATA[
+				import org.openmrs.module.register.web.dwr.DWRRegisterService;
+				DWRRegisterService.getRegisterEntryCount(int registerId, int locationId);
+			]]>
+		</signatures>
+	</dwr>
+	
+                    `
+	<!-- Servlets -->
+	<!-- Accessed through the url /pageContext()/moduleServlet/<moduleId>/<servlet-name>
+	<servlet>
+		<servlet-name>formDownload</servlet-name>
+		<servlet-class>${modulePackage}.web.servlet.FormDownloadServlet</servlet-class>
+	</servlet>
+	-->
+	<!-- /Servlets -->
+
+
+	<!-- Internationalization -->
+	<!-- All message codes should start with ${moduleId}.* -->
+	<messages>
+		<lang>en</lang>
+		<file>messages.properties</file>
+	</messages>
+	<!-- /Internationalization -->
+	<mappingFiles>
+    </mappingFiles>
+</module>
+
