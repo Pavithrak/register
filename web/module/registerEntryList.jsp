@@ -27,7 +27,12 @@
 		});
 	});
 
-	function loadUrlIntoAddRegisterEntryPopup(title, urlToLoad) {
+	function loadUrlIntoAddRegisterEntryPopup(title, param) {
+		var urlToLoad = "/openmrs/module/register/registerHtmlForm.form?mode=Enter&inPopup=true&registerId=";
+		urlToLoad += $j('#registerId').val();
+		if(param){
+			urlToLoad += param;
+		}
 		$j("#displayAddRegisterEntryPopupIframe").attr("src", urlToLoad);
 		$j('#displayAddRegisterEntryPopup')
 			.dialog('option', 'title', title)
@@ -37,21 +42,8 @@
 		}
 </script>
 
-<c:url var="viewRegisterEntryUrl"
-	value="/module/register/registerHtmlForm.form">
-	<c:param name="registerId" value="${commandMap.map['register'].id}" />
-	<c:param name="mode" value="Enter" />
-	<c:param name="inPopup" value="true" />
-</c:url>
 
-
-<p>
-	<h2>
-		${commandMap.map['register'].name}
-	</h2>
-</p>
 <br/>
-<c:if test="${not commandMap.map['register'].retired}">
 	<openmrs:hasPrivilege privilege="Manage Register Patients">
 		
 		<openmrs:htmlInclude file="/scripts/dojoConfig.js"></openmrs:htmlInclude>
@@ -66,8 +58,8 @@
 				dojo.event.topic.subscribe("pSearch/select", 
 					function(msg) {
 						if (msg.objs[0].patientId){
-							var newPatientURL = "${viewRegisterEntryUrl}" + "&patientId="+msg.objs[0].patientId;
-							loadUrlIntoAddRegisterEntryPopup('<spring:message code="register.addPatientToRegister" />',newPatientURL);
+							var param = "&patientId="+msg.objs[0].patientId;
+							loadUrlIntoAddRegisterEntryPopup('<spring:message code="register.addPatientToRegister" />',param);
 						}
 						else if (msg.objs[0].href)
 							document.location = msg.objs[0].href;
@@ -75,7 +67,7 @@
 				);
 				
 				<c:if test="${empty hideAddNewPatient}">
-					searchWidget.addPatientLink ='<a href="" onClick="loadUrlIntoAddRegisterEntryPopup(\'<spring:message code="register.addPatientToRegister" />\',\'${viewRegisterEntryUrl}\');return false;"><spring:message code="register.addPatientToRegister" /></a>';
+					searchWidget.addPatientLink ='<a href="" onClick="loadUrlIntoAddRegisterEntryPopup(\'<spring:message code="register.addPatientToRegister" />\');return false;"><spring:message code="register.addPatientToRegister" /></a>';
 				</c:if>
 				searchWidget.inputNode.select();
 				changeClassProperty("description", "display", "none");
@@ -84,59 +76,57 @@
 			
 		</script>
 		
-		<div id="findPatient">
-			<b class="boxHeader"><spring:message code="register.findPatient" />
-			</b>
+		<div id="registerLocationPanel">
+			<b class="boxHeader"><spring:message code="register.title" /></b>			
 			<div class="box">
-				<div dojoType="PatientSearch" widgetId="pSearch"
-					showIncludeVoided="false"
-					searchLabel="<spring:message code="Patient.searchBox" htmlEscape="true"/>"
-					showVerboseListing="false"
-					patientId='<request:parameter name="patientId"/>'
-					searchPhrase='<request:parameter name="phrase"/>'
-					showAddPatientLink='false'
-				</div>
+				<table cellspacing="0" cellpadding="3">
+				<tr>
+					<th>
+						<spring:message code="register.title" />
+					</th>
+					<td>
+						
+						<select name="registerId" id="registerId">
+							<option value="-1">
+								<spring:message code="register.location.select" />
+							</option>
+							<c:forEach var="register" items="${commandMap.map['registers'] }">
+								<option value="${ register.id }">${ register.name }</option>
+							</c:forEach>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<th>
+						<spring:message code="register.location.list.title" />
+					</th>
+					<td>
+						<select name="locationId" id="locationId">
+							<option value="-1">
+								<spring:message code="register.location.select" />
+							</option>
+							<c:forEach var="location" items="${commandMap.map['locations'] }">
+								<option value="${ location.locationId }">${ location.name }</option>
+							</c:forEach>
+						</select>
+					</td>
+				</tr>
+				</table>
 			</div>
 		</div>
 		<br />
-		<a href="" onClick="loadUrlIntoAddRegisterEntryPopup('<spring:message code="register.addPatientToRegister" />','${viewRegisterEntryUrl}');return false;"><spring:message code="register.addPatientToRegister" /></a>
-		<br />
-		<br/>
+		
 	</openmrs:hasPrivilege>
-</c:if>
-<b class="boxHeader">
-	<spring:message code="register.location.list.title"/>
-</b>
-<form method="get" class="box">
 
-	<div id="locationList">
-		<table>
-			<tr>
-				<td>
-					<spring:message code="register.location.list.title" />
-					<select name="locationId" id="locationId">
-						<option value="-1">
-							<spring:message code="register.location.select" />
-						</option>
-						<c:forEach var="location" items="${commandMap.map['locations'] }">
-							<option value="${ location.locationId }">${ location.name }</option>
-						</c:forEach>
-					</select>
 
-				</td>
-			</tr>
-		</table>
-	</div>
-	
-	<input type="hidden" id="registerId" value='<c:out value="${param.registerId}"/>'/>
-	<input type="hidden" id="htmlFormId" value='<c:out value="${commandMap.map['htmlFormId']}"/>'/>	
-	
-	<input type="hidden" id="registerCount" value='1'/>	
-	<input type="hidden" id="currentPage" value='1'/>	
-	<input type="hidden" id="total_pages" value='1'/>	
-	
-	<br style="clear:both;" />
-	<div id="registerContents">
+<input type="hidden" id="registerCount" value='1'/>	
+<input type="hidden" id="currentPage" value='1'/>	
+<input type="hidden" id="total_pages" value='1'/>
+<input type="hidden" id="static_location_content" value='<spring:message code="register.viewData" />'/>
+
+<div id="registerContents" >
+<b class="boxHeader"><div id="locationName"></div></b>
+	<div id="registerData" class="box">
 		<table width="100%">
 			<tbody id="searchInfoBar" >			
 			<tr>
@@ -163,10 +153,34 @@
 			<div id='previous'  align="center" class="paginate_enabled_previous" onClick="previousPage();"></div>
 			<div id='next'  align="center" class="paginate_disabled_next"  onClick="nextPage();"></div>
 		</div>
+		<div id="addPatientPanel">
+			<br />
+					<a href="" onClick="loadUrlIntoAddRegisterEntryPopup('<spring:message code="register.addPatientToRegister" />');return false;"><spring:message code="register.addPatientToRegister" /></a>
+			<br />
+		</div>
 	</div>
 	
-</form>
+</div>
+<br/>
 
+<div id="findPatient">
+	<b class="boxHeader"><spring:message code="register.findPatient" /></b>
+	<div class="box">
+		<div dojoType="PatientSearch" widgetId="pSearch"
+						showIncludeVoided="false"
+						searchLabel="<spring:message code="Patient.searchBox" htmlEscape="true"/>"
+						showVerboseListing="false"
+						patientId='<request:parameter name="patientId"/>'
+						searchPhrase='<request:parameter name="phrase"/>'
+						showAddPatientLink='false'
+		</div>
+	</div>
+</div>
+			
+
+	
+
+		
 <%@ include file="/WEB-INF/template/footer.jsp"%>
 <openmrs:htmlInclude file="/dwr/engine.js" />
 <openmrs:htmlInclude file="/dwr/util.js" />
@@ -180,6 +194,11 @@ var local_total_pages =1;
 
 $j('#locationId').change(function() {
 	items_per_page = $j('#noOfItems').val();
+	$j('#locationName').html($j('#static_location_content').val()+" "+$j('#locationId option:selected').text());
+	showRegisterContent();	
+});
+
+$j('#registerId').change(function() {
 	showRegisterContent();	
 });
 
@@ -251,16 +270,18 @@ function reloadView(){
 
 function reloadViewData(){
 
-	DWRRegisterService.getRegisterEntriesByLocation($j('#registerId').val(),$j('#locationId').val(),$j('#htmlFormId').val(),$j('#noOfItems').val(),$j('#currentPage').val(),fillDataInTable);
+	DWRRegisterService.getRegisterEntriesByLocation($j('#registerId').val(),$j('#locationId').val(),$j('#noOfItems').val(),$j('#currentPage').val(),fillDataInTable);
 }
 
 
 function showRegisterContent(){
-	if($j('#locationId').val()!=-1){
+	if($j('#locationId').val()!=-1 & $j('#registerId').val()!=-1){
 	$j('#registerContents').show();
+	$j('#findPatient').show();
 	reloadView();
 	}else{
-		$j('#registerContents').hide();
+	$j('#registerContents').hide();
+	$j('#findPatient').hide();
 	}
 }
 

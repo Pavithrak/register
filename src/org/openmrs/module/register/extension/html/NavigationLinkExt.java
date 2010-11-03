@@ -30,7 +30,7 @@ public class NavigationLinkExt extends LinkExt {
 
 	@Override
 	public String getUrl() {
-		return "module/register/register.list";
+		return "module/register/registerEntry.list";
 	}
 
 }

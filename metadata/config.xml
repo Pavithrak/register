@@ -90,7 +90,7 @@
 		<signatures>
 			<![CDATA[
 				import org.openmrs.module.register.web.dwr.DWRRegisterService;
-				DWRRegisterService.getRegisterEntriesByLocation(int registerId, int locationId, int htmlFormId,int pageSize,int page);
+				DWRRegisterService.getRegisterEntriesByLocation(int registerId, int locationId,int pageSize,int page);
 			]]>
 			<![CDATA[
 				import org.openmrs.module.register.web.dwr.DWRRegisterService;

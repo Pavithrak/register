@@ -18,16 +18,18 @@ import org.openmrs.module.htmlformentry.schema.HtmlFormSection;
 import org.openmrs.module.htmlformentry.schema.ObsField;
 import org.openmrs.module.htmlformentry.schema.ObsGroup;
 import org.openmrs.module.register.RegisterService;
+import org.openmrs.module.register.db.hibernate.Register;
 import org.openmrs.web.dwr.EncounterListItem;
 
 public class DWRRegisterService {
 	protected final Log log = LogFactory.getLog(getClass());
 
-	public RegisterViewResult getRegisterEntriesByLocation(int registerId, int locationId, int htmlFormId, int pageSize, int page) {
+	public RegisterViewResult getRegisterEntriesByLocation(int registerId, int locationId,int pageSize, int page) {
 
 		RegisterService registerService = Context.getService(RegisterService.class);
+		Register register=registerService.getRegister(registerId);
 		HtmlFormEntryService htmlFormEntryService = Context.getService(HtmlFormEntryService.class);
-		HtmlForm htmlForm = htmlFormEntryService.getHtmlForm(htmlFormId);
+		HtmlForm htmlForm = htmlFormEntryService.getHtmlForm(register.getHtmlForm().getId());
 		List<Encounter> encounters = registerService.getEncountersForRegisterByLocation(registerId, locationId, pageSize, page);
 		List<EncounterListItem> encounterListItems = new Vector<EncounterListItem>();
 		for (Encounter encounter : encounters) {
