@@ -82,10 +82,11 @@ public class ManageRegisterListController {
 
 			for (String id : registerIds) {
 				try {
-					registerService.deleteRegister(new Integer(id));
+                    Register deleteRegister = registerService.getRegister(new Integer(id));
+                    registerService.deleteRegister(new Integer(id));
 					if (!success.equals(""))
 						success += "<br/>";
-					success += id + " " + deleted;
+					success += deleteRegister.getName() + " " + deleted;
 				} catch (DataIntegrityViolationException e) {
 					error = handleRegisterIntegrityException(e, error, notDeleted);
 				} catch (APIException e) {

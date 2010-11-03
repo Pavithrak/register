@@ -66,19 +66,25 @@ public class RegisterServiceImpl extends BaseOpenmrsService implements RegisterS
 	}
 
 	@Override
-	public List<Encounter> getEncountersForRegisterByLocation(Integer registerId, Integer locationId) {
+	public List<Encounter> getEncountersForRegisterByLocation(Integer registerId, Integer locationId, Integer pageSize, Integer page) {
 		Location location=null;
 		EncounterService encounterService = Context.getEncounterService();
 		Register register = getRegister(registerId);
 		Form form = register.getHtmlForm().getForm();
-		
-		if(locationId>=0){
-			LocationService locationService=Context.getLocationService();
-			location=locationService.getLocation(locationId);
-			return encounterService.getEncounters(form, location);
-		}
-		
-		return encounterService.getEncounters(form);
+		LocationService locationService=Context.getLocationService();
+		location=locationService.getLocation(locationId);
+		return encounterService.getEncounters(form, location, pageSize, page);
+	}
+	
+	@Override
+	public Integer getEncounterCountForRegisterByLocation(Integer registerId, Integer locationId) {
+		Location location=null;
+		EncounterService encounterService = Context.getEncounterService();
+		Register register = getRegister(registerId);
+		Form form = register.getHtmlForm().getForm();
+		LocationService locationService=Context.getLocationService();
+		location=locationService.getLocation(locationId);
+		return encounterService.getEncounterCount(form, location);
 	}
 	
 	

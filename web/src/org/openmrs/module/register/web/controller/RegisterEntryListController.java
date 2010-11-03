@@ -26,7 +26,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping(value = "module/register/registerEntry.list")
@@ -49,21 +48,21 @@ public class RegisterEntryListController {
 	}
 
 	@ModelAttribute("commandMap")
-	protected CommandMap formBackingObject(@RequestParam(required = true, value = "registerId")
-	Integer registerId, @RequestParam(required = false, value = "htmlFormId")
-	Integer htmlFormId) throws Exception {
-		RegisterService registerService = Context.getService(RegisterService.class);
-		Register register = registerService.getRegister(registerId);
+	protected CommandMap formBackingObject() throws Exception {
 		CommandMap commandMap = new CommandMap();
 		commandMap.addToMap("locations", getLocations());
-		commandMap.addToMap("register", register);
-		commandMap.addToMap("htmlFormId", register.getHtmlForm().getId());
+		commandMap.addToMap("registers", getRegisters());
 		return commandMap;
 	}
 
 	private List<Location> getLocations() {
 		LocationService locationService = (LocationService) Context.getService(LocationService.class);
 		return locationService.getAllLocations();
+	}
+	
+	private List<Register> getRegisters() {
+		RegisterService registerService = (RegisterService) Context.getService(RegisterService.class);
+		return registerService.getRegisters(true);
 	}
 
 }
