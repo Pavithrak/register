@@ -3,6 +3,7 @@ package org.openmrs.module.register.web.controller;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openmrs.Encounter;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.htmlformentry.FormEntrySession;
@@ -36,14 +37,27 @@ public class RegisterHtmlFormController extends HtmlFormEntryController {
 		HtmlForm htmlForm = null;
 		Patient patient = null;
 		Register register=null;
+		Encounter encounter = null;		
 		CommandMap commandMap= new CommandMap();
 		
-		String patientIDParam = request.getParameter("patientId");
-		if (StringUtils.hasText(patientIDParam)) {
+		String patientIDParam = null;
+		String encounterIDParam = request.getParameter("encounterId");
+		if (StringUtils.hasText(encounterIDParam)) {
 			try {
-				patient = Context.getPatientService().getPatient(new Integer(patientIDParam));
+				encounter = Context.getEncounterService().getEncounter(new Integer(encounterIDParam));
+				patient = encounter.getPatient();
 			}
 			catch (Exception e) {
+			}
+		}
+		else {
+			patientIDParam = request.getParameter("patientId");
+			if (StringUtils.hasText(patientIDParam)) {
+				try {
+					patient = Context.getPatientService().getPatient(new Integer(patientIDParam));
+				}
+				catch (Exception e) {
+				}
 			}
 		}
 
@@ -73,19 +87,27 @@ public class RegisterHtmlFormController extends HtmlFormEntryController {
 			throw new IllegalArgumentException("The given register ID '" + registerIdParam + "' does not have an HtmlForm associated with it");
 
 		if (mode == Mode.VIEW || mode == Mode.EDIT) {
-
-			if (StringUtils.hasText(patientIDParam)) {
-				if (patient == null)
-					throw new IllegalArgumentException("No patient with id " + patientIDParam
+			if (encounter == null && patient == null) {
+				if (StringUtils.hasText(encounterIDParam)){
+					throw new IllegalArgumentException("No encounter with id " + encounterIDParam				
+							+ "  or not able to reterive the given encounter details.");	
+				}
+				if (StringUtils.hasText(patientIDParam)){
+					throw new IllegalArgumentException("No patient with id " + patientIDParam				
 							+ "  or not able to reterive the given patient details.");
+				}
+				throw new IllegalArgumentException("encounterId/patientId param missing");
 			}
-			else
-				throw new IllegalArgumentException("patientId param missing");
 		}
 
 		FormEntrySession session;
 		isEncounterEnabled = hasEncouterTag(htmlForm.getXmlData());
-		session = new FormEntrySession(patient, htmlForm, mode);
+		if (isEncounterEnabled){
+			session = new FormEntrySession(patient, encounter, mode, htmlForm);
+		}
+		else{
+			session = new FormEntrySession(patient, htmlForm, mode);
+		}
 
 		// In case we're not using a sessionForm, we need to check for the case
 		// where the underlying form was modified while a user was filling a

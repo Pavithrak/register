@@ -190,26 +190,51 @@ function addHeaders(headerRawData){
 function addRegistryRows(keys, registryRowData){
 	var html = "";
 	$j.each(keys, function(index, key){
-		var value = typeof(registryRowData[key]) == 'undefined' ? "" : registryRowData[key];
-	    html += '<td>' + value + '</td>';						    
+		var value = "";
+		if(key == 'edit'){
+			var encounterID = registryRowData['encounterId'];
+			
+			editURL = '<c:url var="editUrl" value="/module/register/registerHtmlForm.form">' +				
+							'<c:param name="registerId" value="${commandMap.map[\'register\'].id}" />' +
+							'<c:param name="mode" value="Edit" />' +
+							'<c:param name="inPopup" value="true" />' +
+					  '</c:url>'				
+			
+			hyperLink = '<a href="" onClick="loadUrlIntoAddRegisterEntryPopup(\'<spring:message code="register.edit" />\',\'${editUrl}&encounterId=' + encounterID + '\');return false;">' +  
+							'<img src="${pageContext.request.contextPath}/images/edit.gif" title="<spring:message code="general.edit"/>" border="0" align="top" />' +
+						'</a>'
+			
+			value = editURL + hyperLink;
+		}
+		else {
+			value = typeof(registryRowData[key]) == 'undefined' ? "" : registryRowData[key];	    	
+	    	}						    
+		html += '<td>' + value + '</td>';
 	}) 	
 	return html;
 }
 
 function pageSelectCallback(page_index, jq){
-
+	 var editCol = ["edit"];
 	 var items_per_page = $j('#noOfItems').val();
-     // Get number of elements per pagionation page from form
+     // Get number of elements per pagionation page from form     
+     
+     var tableHeaderHtml = "<tr> ";
      var headerKeys = [];
-     var tableHeaderHtml = "<tr>";
+     <openmrs:hasPrivilege privilege="Manage Register Patients">
+     	tableHeaderHtml += "<th> Edit </th> ";     	
+     	headerKeys = headerKeys.concat(editCol);
+     </openmrs:hasPrivilege>
+          
      headerData = addHeaders(registerEntries['headers']);
      tableHeaderHtml += headerData['headerHtml'];
-     headerKeys = headerData['headerKeys'];
+     headerKeys = headerKeys.concat(headerData['headerKeys']);
      headerData = addHeaders(registerEntries['obsHeaders']);
      tableHeaderHtml += headerData['headerHtml'];
      var obsHeaderKeys = headerData['headerKeys'];
      
      tableHeaderHtml += '</tr>';
+     
             var max_elem = Math.min((page_index+1) * items_per_page, registerEntries['registerViewResults'].length);
             var newcontent = '';
             
