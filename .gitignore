@@ -2,3 +2,9 @@
 /build
 /dist
 /.settings
+*.svn
+*target*
+*.settings
+*.classpath
+*.project
+*.swp
