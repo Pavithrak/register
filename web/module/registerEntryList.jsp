@@ -88,7 +88,7 @@
 						
 						<select name="registerId" id="registerId">
 							<option value="-1">
-								<spring:message code="register.location.select" />
+								<spring:message code="register.selectRegister" />
 							</option>
 							<c:forEach var="register" items="${commandMap.map['registers'] }">
 								<option value="${ register.id }">${ register.name }</option>
