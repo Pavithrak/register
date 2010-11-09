@@ -14,6 +14,8 @@
 package org.openmrs.module.register.web.controller;
 
 import java.util.List;
+import java.util.Map;
+import java.util.LinkedHashMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -60,9 +62,14 @@ public class RegisterEntryListController {
 		return locationService.getAllLocations();
 	}
 	
-	private List<Register> getRegisters() {
+	private Map<String,Register> getRegisters() {
 		RegisterService registerService = (RegisterService) Context.getService(RegisterService.class);
-		return registerService.getRegisters(true);
+		List<Register> registers = registerService.getRegisters(true);
+		Map<String, Register> registerMap= new LinkedHashMap<String, Register>();
+		for (Register register : registers) {
+			registerMap.put(String.valueOf(register.getId()), register);
+		} 
+		return registerMap;
 	}
 
 }
