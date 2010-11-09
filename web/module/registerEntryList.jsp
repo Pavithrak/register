@@ -27,10 +27,11 @@
 	});
 
 	function loadUrlIntoAddRegisterEntryPopup(title, param) {
-		var urlToLoad = "/openmrs/module/register/registerHtmlForm.form?closeAfterSubmission=close&mode=Enter&inPopup=true&registerId=";
+	var urlToLoad = "/openmrs/module/register/registerHtmlForm.form?closeAfterSubmission=close&mode=Enter&inPopup=true&registerId=";
+
 		urlToLoad += $j('#registerId').val();
 		if(param){
-			urlToLoad += param;
+			urlToLoad = urlToLoad + '&' + param;
 		}
 		$j("#displayAddRegisterEntryPopupIframe").attr("src", urlToLoad);
 		$j('#displayAddRegisterEntryPopup')
@@ -57,7 +58,7 @@
 				dojo.event.topic.subscribe("pSearch/select", 
 					function(msg) {
 						if (msg.objs[0].patientId){
-							var param = "&patientId="+msg.objs[0].patientId;
+							var param = "mode=Enter&patientId="+msg.objs[0].patientId;
 							loadUrlIntoAddRegisterEntryPopup('<spring:message code="register.addPatientToRegister" />',param);
 						}
 						else if (msg.objs[0].href)
@@ -66,7 +67,7 @@
 				);
 				
 				<c:if test="${empty hideAddNewPatient}">
-					searchWidget.addPatientLink ='<a href="" onClick="loadUrlIntoAddRegisterEntryPopup(\'<spring:message code="register.addPatientToRegister" />\');return false;"><spring:message code="register.addPatientToRegister" /></a>';
+					searchWidget.addPatientLink ='<a href="" onClick="loadUrlIntoAddRegisterEntryPopup(\'<spring:message code="register.addPatientToRegister" />\',\'mode=Enter\');return false;"><spring:message code="register.addPatientToRegister" /></a>';
 				</c:if>
 				searchWidget.inputNode.select();
 				changeClassProperty("description", "display", "none");
@@ -101,9 +102,7 @@
 								<spring:message code="register.location.select" />
 							</option>
 							<c:forEach var="location" items="${commandMap.map['locations'] }">
-								<option value="${ location.locationId }">
-									${ location.name }
-								</option>
+							<option value="${ location.locationId }">${ location.name }</option>
 							</c:forEach>
 						</select>
 					</td>
@@ -114,7 +113,6 @@
 	<br />
 
 </openmrs:hasPrivilege>
-
 
 <input type="hidden" id="registerCount" value='1' />
 <input type="hidden" id="currentPage" value='1' />
@@ -139,8 +137,7 @@
 			</tbody>
 		</table>
 
-		<table cellspacing="0" cellpadding="2" style="width: 100%;"
-			class="openmrsSearchTable">
+        	<table cellspacing="0" cellpadding="2" style="width: 100%;" class="openmrsSearchTable">
 			<thead id="searchresultheaders">
 			</thead>
 			<tbody id="Searchresult">
@@ -157,8 +154,7 @@
 <br />
 
 <div id="findPatientPanel">
-	<b class="boxHeader"><spring:message code="register.findPatient" />
-	</b>
+	<b class="boxHeader"><spring:message code="register.findPatient" /></b>
 	<div class="box">
 		<div dojoType="PatientSearch" widgetId="pSearch"
 			showIncludeVoided="false"
@@ -166,7 +162,8 @@
 			showVerboseListing="false"
 			patientId='<request:parameter name="patientId"/>'
 			searchPhrase='<request:parameter name="phrase"/>'
-			showAddPatientLink='false'</div>
+			showAddPatientLink='false'
+		</div>
 
 		<div id="addPatientPanel">
 			<table>
@@ -287,21 +284,38 @@
 	function addRegistryRows(keys, registryRowData){
 		var html = "";
 		$j.each(keys, function(index, key){
-				var value = typeof(registryRowData[key]) == 'undefined' ? "" : registryRowData[key];
+			var value = "";
+			if(key == 'edit'){
+				var encounterID = registryRowData['encounterId'];
+			
+				value = '<a href="" onClick="loadUrlIntoAddRegisterEntryPopup(\'<spring:message code="register.edit" />\',\'mode=Edit&encounterId=' + encounterID + '\');return false;">' +  
+								'<img src="${pageContext.request.contextPath}/images/edit.gif" title="<spring:message code="general.edit"/>" border="0" align="top" />' +
+							'</a>'
+			}
+			else {
+				value = typeof(registryRowData[key]) == 'undefined' ? "" : registryRowData[key];	    	
+		    	}						    
 			    html += '<td>' + value + '</td>';						    
-			}) 	
+		}) 	
 		return html;
 	}
 	
 	function constructRegisterTable(){
+		var editCol = ["edit"];
 		var page_index = $j('#currentPage').val();
 		var items_per_page = $j('#noOfItems').val();
 		// Get number of elements per pagionation page from form
+     
+		var tableHeaderHtml = "<tr> ";
 		var headerKeys = [];
-		var tableHeaderHtml = "<tr>";
+		<openmrs:hasPrivilege privilege="Manage Register Patients">
+			tableHeaderHtml += "<th> Edit </th> ";     	
+			headerKeys = headerKeys.concat(editCol);
+		</openmrs:hasPrivilege>
+		
 		headerData = addHeaders(registerEntries['headers']);
 		tableHeaderHtml += headerData['headerHtml'];
-		headerKeys = headerData['headerKeys'];
+     		headerKeys = headerKeys.concat(headerData['headerKeys']);
 		headerData = addHeaders(registerEntries['obsHeaders']);
 		tableHeaderHtml += headerData['headerHtml'];
 		var obsHeaderKeys = headerData['headerKeys'];
@@ -311,7 +325,7 @@
 		
 		// Iterate through a selection of the content and build an HTML string
 		var rowStyle = "oddRow" ;
-		if(items_per_page > 0){
+                if($j('#registerCount').val() > 0){
 			for(var i = 0; i < registerEntries['registerViewResults'].length; i++)
 			{
 				newcontent += '<tr class="'+rowStyle+'">' ;
