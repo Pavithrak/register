@@ -20,6 +20,7 @@
 				resizable: true,
 				closeOnEscape: true,
 				width: '95%',
+				overlay: { backgroundColor: "#000000", opacity: 0.5 },
 				modal: true,
 				open: function(a, b) {},
 				close: function() { showRegisterContent(); refreshFindPatientDojoWidget();}
@@ -27,7 +28,7 @@
 	});
 
 	function loadUrlIntoAddRegisterEntryPopup(title, param) {
-	var urlToLoad = "/openmrs/module/register/registerHtmlForm.form?closeAfterSubmission=close&mode=Enter&inPopup=true&registerId=";
+		var urlToLoad = "/openmrs/module/register/registerHtmlForm.form?closeAfterSubmission=close&inPopup=true&registerId=";
 
 		urlToLoad += $j('#registerId').val();
 		if(param){
@@ -38,7 +39,7 @@
 			.dialog('option', 'title', title)
 			.dialog('option', 'height', '450')
 			.dialog('open');
-		}
+	}
 </script>
 
 <br />
@@ -171,7 +172,7 @@
 					<td>
 						or
 						<a href=""
-							onClick="loadUrlIntoAddRegisterEntryPopup('<spring:message code="register.addPatientToRegister" />');return false;"><spring:message
+							onClick="loadUrlIntoAddRegisterEntryPopup('<spring:message code="register.addPatientToRegister" />','mode=Enter');return false;"><spring:message
 								code="register.addPatientToRegister" />
 						</a>
 					</td>
@@ -325,7 +326,7 @@
 		
 		// Iterate through a selection of the content and build an HTML string
 		var rowStyle = "oddRow" ;
-                if($j('#registerCount').val() > 0){
+		if($j('#registerCount').val() > 0){
 			for(var i = 0; i < registerEntries['registerViewResults'].length; i++)
 			{
 				newcontent += '<tr class="'+rowStyle+'">' ;
@@ -391,7 +392,7 @@
 	    showRegisterContent();
 	}	         
 	        
-    function isActiveRegister(){
+	function isActiveRegister(){
      	var label=$j("#registerId option:selected").parents("optgroup").attr("label"); 
 		if(label=='active'){
 			return true;
@@ -399,15 +400,15 @@
 		else{
 		    return false;
 		}
-    }
+	}
 	        
 	function  showFindPatientPanel(){
 		if(isActiveRegister()){
-     		$j('#findPatientPanel').show();
-     	}
-     	else{
-     		hideFindPatientPanel();
-     	}
+			$j('#findPatientPanel').show();
+     		}
+		else{
+			hideFindPatientPanel();
+		}
 	}
 	
 	function  showResultPanel(){
