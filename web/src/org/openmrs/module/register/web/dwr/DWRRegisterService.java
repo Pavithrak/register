@@ -87,4 +87,7 @@ public class DWRRegisterService {
 		return registerService.getEncounterCountForRegisterByLocation(registerId, locationId).intValue();
 	}
 
+	public void deleteEncounter(int encounterId) {
+		Context.getService(RegisterService.class).deleteEncounter(encounterId);
+	}
 }

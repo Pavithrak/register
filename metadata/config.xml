@@ -84,6 +84,7 @@
 				<param name="class" value="org.openmrs.module.register.web.dwr.DWRRegisterService"/>
 				<include method="getRegisterEntriesByLocation"/>
 				<include method="getRegisterEntryCount"/>
+				<include method="deleteEncounter"/>
 			</create>
 		</allow>
 
