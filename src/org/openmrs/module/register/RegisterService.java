@@ -60,4 +60,7 @@ public interface RegisterService {
 	@Authorized( { RegisterConstant.VIEW_REGISTERS })
 	public List<Encounter> getEncountersForRegisterByLocation(Integer registerId ,Integer locationId);
 
+	@Transactional
+	public void deleteEncounter(Integer encounterId);
+
 }

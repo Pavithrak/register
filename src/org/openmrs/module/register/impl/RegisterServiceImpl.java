@@ -13,6 +13,9 @@
  */
 package org.openmrs.module.register.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.openmrs.Encounter;
 import org.openmrs.Form;
 import org.openmrs.Location;
@@ -21,11 +24,9 @@ import org.openmrs.api.LocationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.register.RegisterService;
+import org.openmrs.module.register.db.RegisterDAO;
 import org.openmrs.module.register.db.hibernate.Register;
 import org.openmrs.module.register.db.hibernate.RegisterType;
-import org.openmrs.module.register.db.RegisterDAO;
-
-import java.util.List;
 
 public class RegisterServiceImpl extends BaseOpenmrsService implements RegisterService{
     private RegisterDAO dao;
@@ -72,14 +73,28 @@ public class RegisterServiceImpl extends BaseOpenmrsService implements RegisterS
 		Register register = getRegister(registerId);
 		Form form = register.getHtmlForm().getForm();
 		
+		List<Encounter> encounters;
 		if(locationId>=0){
 			LocationService locationService=Context.getLocationService();
 			location=locationService.getLocation(locationId);
-			return encounterService.getEncounters(form, location);
+			encounters = encounterService.getEncounters(form, location);
+		} else {
+			encounters = encounterService.getEncounters(form);
 		}
 		
-		return encounterService.getEncounters(form);
+		List<Encounter> result = new ArrayList<Encounter>();
+		for (Encounter encounter : encounters) {
+			if(!encounter.isVoided()) {
+				result.add(encounter);
+			}
+		}
+		return result;
 	}
-	
-	
+
+	@Override
+	public void deleteEncounter(Integer encounterId) {
+		EncounterService encounterService = Context.getEncounterService();
+		Encounter encounter = encounterService.getEncounter(encounterId);
+		encounterService.voidEncounter(encounter, "delete from the register");
+	}
 }

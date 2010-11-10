@@ -19,6 +19,8 @@ import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.classic.Session;
 import org.hibernate.criterion.Restrictions;
+import org.openmrs.Form;
+import org.openmrs.module.htmlformentry.HtmlForm;
 import org.openmrs.module.register.db.RegisterDAO;
 
 public class HibernateRegisterDAO implements RegisterDAO {
@@ -46,6 +48,20 @@ public class HibernateRegisterDAO implements RegisterDAO {
 	}
 
 	public Register saveRegister(Register register) {
+		HtmlForm htmlForm = register.getHtmlForm();
+		if(htmlForm.getId() == null) {
+			Form form = htmlForm.getForm();
+			if(form.getId() == null) {
+				getCurrentSession().save(form);
+			}
+			getCurrentSession().save(htmlForm);
+		}
+		
+		RegisterType registerType = register.getRegisterType();
+		if(registerType.getId() == null) {
+			getCurrentSession().save(registerType);
+		}
+		
 		getCurrentSession().saveOrUpdate(register);
 		return register;
 	}

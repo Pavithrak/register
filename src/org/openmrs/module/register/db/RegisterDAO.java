@@ -13,13 +13,10 @@
  */
 package org.openmrs.module.register.db;
 
-import org.openmrs.Encounter;
-import org.openmrs.Form;
-import org.openmrs.Location;
+import java.util.List;
+
 import org.openmrs.module.register.db.hibernate.Register;
 import org.openmrs.module.register.db.hibernate.RegisterType;
-
-import java.util.List;
 
 public interface RegisterDAO {
     

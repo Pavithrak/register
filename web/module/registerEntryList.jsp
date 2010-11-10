@@ -131,7 +131,7 @@
 		<tbody id="searchInfoBar" >			
 			<tr>
 				<td align="left">
-			        	Show <select id="noOfItems"   onChange="loadDataForPagination();"><option value="2">20</option><option value="5">50</option><option value="7">100</option></select> entries
+			        	Show <select id="noOfItems"   onChange="loadDataForPagination();"><option value="2">2</option><option value="5">5</option><option value="7">10</option></select> entries
 			        </td>
 			        <td align="right">
 			        	<div class="locationBoxNav"></div>
