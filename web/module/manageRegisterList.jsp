@@ -34,7 +34,6 @@
 <form method="post" class="box" id="target">
     <table id="registerTable" cellspacing="5">
         <tr>
-            <th></th>
             <th><spring:message code="general.name"/></th>
             <th><spring:message code="general.description"/></th>
             <th><spring:message code="register.type"/></th>
@@ -43,11 +42,6 @@
         <c:forEach var="register" items="${registers}">
             <tr
             <c:if test="${register.retired}">class="retired"</c:if>>
-            <td valign="top">
-                <openmrs:hasPrivilege privilege="Manage Registers">
-                    <input class="registers" type="checkbox" name="registerId" value="${register.registerId}">
-                </openmrs:hasPrivilege>
-            </td>
             <td valign="top">
                 <openmrs:hasPrivilege privilege="Manage Registers">
                     <a href="register.form?registerId=${register.registerId}">${register.name}</a>
@@ -63,25 +57,10 @@
             </tr>
         </c:forEach>
     </table>
-    <br/><br/>
-    <openmrs:hasPrivilege privilege="Manage Registers">
-        <input type="button" value='<spring:message code="register.delete"/>' name="action" onclick="showDialog()"/>
-    </openmrs:hasPrivilege>
 </form>
 
 <script type="text/javascript">
     toggleRowVisibilityForClass("registerTable", "retired", false);
-
-    function showDialog() {
-        if ($j(".registers").is(':checked')) {
-            if (confirm('<spring:message code="register.confirm.delete"/>')) {
-                $j("#target").submit();
-            }
-        }
-        else {
-            $j("#target").submit();
-        }
-    }
 </script>
 
 <%@ include file="/WEB-INF/template/footer.jsp" %>

@@ -20,7 +20,9 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
+import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.htmlformentry.HtmlForm;
 import org.openmrs.module.htmlformentry.HtmlFormEntryService;
 import org.openmrs.module.register.RegisterService;
@@ -29,6 +31,7 @@ import org.openmrs.module.register.db.hibernate.RegisterType;
 import org.openmrs.module.register.propertyeditor.HtmlFormEdiotr;
 import org.openmrs.module.register.propertyeditor.RegisterTypeEditor;
 import org.openmrs.web.WebConstants;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ValidationUtils;
@@ -38,6 +41,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 @RequestMapping(value = "module/register/register.form")
@@ -68,21 +73,47 @@ public class RegisterFormController {
 		binder.registerCustomEditor(RegisterType.class, new RegisterTypeEditor());
 	}
 
-	@RequestMapping(method = RequestMethod.POST)
-	public String onSubmit(HttpServletResponse response, HttpSession httpSession, @ModelAttribute("commandMap") CommandMap commandMap, BindingResult errors) {
+	
+	@RequestMapping(method=RequestMethod.POST,params="action=saveRegister")
+	public String  saveRegister(WebRequest request,HttpServletResponse response, HttpSession httpSession, @ModelAttribute("commandMap") CommandMap commandMap, BindingResult errors) {
 		Register paramRegister = (Register) commandMap.getMap().get("register");
 		validate(paramRegister, errors);
-		
+			
 		if (errors.hasErrors()) {
 			return REGISTER_FORM_VIEW;
 		}
 		RegisterService registerService = Context.getService(RegisterService.class);
 		paramRegister = registerService.saveRegister(paramRegister);
-		
 		httpSession.setAttribute(WebConstants.OPENMRS_MSG_ATTR, "register.saved");
-
-		
 		return "redirect:" + MANAGE_REGISTER_LIST;
+	}
+	
+	@RequestMapping(method=RequestMethod.POST,params="action=deleteRegister")
+	public String deleteRegister(WebRequest request,HttpServletResponse response, HttpSession httpSession, @ModelAttribute("commandMap") CommandMap commandMap, BindingResult errors)  {
+		MessageSourceService mss = Context.getMessageSourceService();
+		
+		String success = "";
+		String error = "";
+		Register paramRegister = (Register) commandMap.getMap().get("register");
+		RegisterService registerService = (RegisterService) Context.getService(RegisterService.class);
+			String deleted = mss.getMessage("general.deleted");
+			String notDeleted = mss.getMessage("register.delete.error");
+			try {
+                    registerService.deleteRegister(paramRegister.getId());
+					if (!success.equals(""))
+						success += "<br/>";
+					success += paramRegister.getName() + " " + deleted;
+				} catch (DataIntegrityViolationException e) {
+					error = handleRegisterIntegrityException(e, error, notDeleted);
+				} catch (APIException e) {
+					error = handleRegisterIntegrityException(e, error, notDeleted);
+				}
+		
+		if (!success.equals(""))
+			httpSession.setAttribute(WebConstants.OPENMRS_MSG_ATTR, success);
+		if (!error.equals(""))
+			httpSession.setAttribute(WebConstants.OPENMRS_ERROR_ATTR, error);
+		return ("redirect:" + MANAGE_REGISTER_LIST);
 	}
 	
 	private void validate(Register register, BindingResult errors){
@@ -115,5 +146,25 @@ public class RegisterFormController {
 			commandMap.addToMap("htmlForms", allHtmlForms);
 		
 		return commandMap;
+	}
+	
+	/**
+	 * Logs a Register delete data integrity violation exception and returns a
+	 * user friendly message of the problem that occurred.
+	 * 
+	 * @param e
+	 *            the exception.
+	 * @param error
+	 *            the error message.
+	 * @param notDeleted
+	 *            the not deleted error message.
+	 * @return the formatted error message.
+	 */
+	private String handleRegisterIntegrityException(Exception e, String error, String notDeleted) {
+		log.warn("Error deleting register", e);
+		if (!error.equals(""))
+			error += "<br/>";
+		error += notDeleted;
+		return error;
 	}
 }

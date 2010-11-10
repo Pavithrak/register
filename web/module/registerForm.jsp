@@ -166,9 +166,17 @@
 				</c:if>
 			</table>
 			<br />
-			<input type="submit"
-				value='<spring:message code="register.save.button"/>' />
+			<input type="hidden"  id="action" name="action" value="" />
+			
+			<input type="button"
+				value='<spring:message code="register.save.button"/>'  onclick="onSave()"  />
 			&nbsp;
+			<c:if test="${commandMap.map['register'].registerId != null}">
+			<openmrs:hasPrivilege privilege="Manage Registers">
+        		<input type="button" value='<spring:message code="register.delete"/>'  onclick="onDelete()"/>
+    		</openmrs:hasPrivilege>
+    		</c:if>
+    		&nbsp;
 			<input type="button" value='<spring:message code="general.cancel"/>'
 				onclick="document.location='${pageContext.request.contextPath}/module/register/manageRegister.list'">
 
@@ -178,6 +186,18 @@
 <script type="text/javascript">
 	document.getElementById("map['register'].name").focus();
 	retiredClicked(document.getElementById("retired"));
+	
+	function onDelete() {
+            if (confirm('<spring:message code="register.confirm.delete"/>'+'\n\n'+'<spring:message code="register.confirm.deleteNote"/>')) {
+        			$j("#action").val('deleteRegister');
+        			 $j("#createForm").submit();    
+            }
+        }
+        
+   function onSave(){
+        	$j("#action").val('saveRegister');
+            $j("#createForm").submit();
+        }
 </script>
 
 <%@ include file="/WEB-INF/template/footer.jsp"%>
