@@ -14,6 +14,8 @@
 package org.openmrs.module.register.web.controller;
 
 import java.util.List;
+import java.util.Map;
+import java.util.LinkedHashMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -21,11 +23,11 @@ import org.openmrs.Location;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.register.RegisterService;
+import org.openmrs.module.register.db.hibernate.Register;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping(value = "module/register/registerEntry.list")
@@ -36,7 +38,6 @@ public class RegisterEntryListController {
 
 	private static final String REGISTER_ENTRY_FORM_VIEW = "/module/register/registerEntryList";
 
-	
 	/**
 	 * Initially called after the formBackingObject method to get the landing
 	 * form name
@@ -48,18 +49,11 @@ public class RegisterEntryListController {
 		return REGISTER_ENTRY_FORM_VIEW;
 	}
 
-	/*@ModelAttribute("locations")
-	protected List<Location> formBackingObject() throws Exception {
-		return getLocations();
-	}*/
-	
 	@ModelAttribute("commandMap")
-	protected CommandMap formBackingObject(@RequestParam(required=true, value="registerId") Integer registerId,@RequestParam(required=false, value="htmlFormId") Integer htmlFormId) throws Exception {
-			RegisterService registerService = Context.getService(RegisterService.class);
-			CommandMap commandMap = new CommandMap();
-			commandMap.addToMap("locations", getLocations());
-			commandMap.addToMap("register", registerService.getRegister(registerId));
-		
+	protected CommandMap formBackingObject() throws Exception {
+		CommandMap commandMap = new CommandMap();
+		commandMap.addToMap("locations", getLocations());
+		commandMap.addToMap("registers", getRegisters());
 		return commandMap;
 	}
 
@@ -68,9 +62,14 @@ public class RegisterEntryListController {
 		return locationService.getAllLocations();
 	}
 	
-	
+	private Map<String,Register> getRegisters() {
+		RegisterService registerService = (RegisterService) Context.getService(RegisterService.class);
+		List<Register> registers = registerService.getRegisters(true);
+		Map<String, Register> registerMap= new LinkedHashMap<String, Register>();
+		for (Register register : registers) {
+			registerMap.put(String.valueOf(register.getId()), register);
+		} 
+		return registerMap;
+	}
 
-
-	
-		
 }

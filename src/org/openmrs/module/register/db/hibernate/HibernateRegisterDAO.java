@@ -18,8 +18,12 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.classic.Session;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.openmrs.Encounter;
 import org.openmrs.Form;
+import org.openmrs.Location;
 import org.openmrs.module.htmlformentry.HtmlForm;
 import org.openmrs.module.register.db.RegisterDAO;
 
@@ -79,4 +83,46 @@ public class HibernateRegisterDAO implements RegisterDAO {
 	public RegisterType getRegisterType(Integer id) {
 		return (RegisterType) sessionFactory.getCurrentSession().load(RegisterType.class, id);
 	}
+
+	/**
+	 * @see org.openmrs.module.register.db.RegisterDAO#getEncounters(org.openmrs.Form, org.openmrs.Location, java.lang.Integer, java.lang.Integer)
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Encounter> getEncounters(Form form,	Location location, Integer pageSize, Integer page) {
+		Criteria criteria = baseEncounterCriteria(form, location);
+		criteria.addOrder(Order.asc("encounterDatetime"));
+		criteria.addOrder(Order.asc("dateCreated"));
+		criteria.setFirstResult((page - 1) * pageSize);
+		criteria.setMaxResults(pageSize);
+		return criteria.list();
+	}
+
+	/**
+	 * @see org.openmrs.module.register.db.RegisterDAO#getEncounterCount(org.openmrs.Form, org.openmrs.Location)
+	 */
+	@Override
+	public Integer getEncounterCount(Form form, Location location) {
+		Criteria criteria = baseEncounterCriteria(form, location);
+		criteria.setProjection(Projections.rowCount());
+		return (Integer)criteria.list().get(0);
+	}
+
+	@Override
+	public void deleteEncounter(Integer encounterId) {
+		Session session = sessionFactory.getCurrentSession();
+		Encounter encounter = (Encounter) session.load(Encounter.class, encounterId);
+		encounter.setVoided(true);
+		session.update(encounter);
+	}
+
+	private Criteria baseEncounterCriteria(Form form, Location location) {
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(
+				Encounter.class);
+		criteria.add(Restrictions.eq("form", form));
+		criteria.add(Restrictions.eq("location", location));
+		criteria.add(Restrictions.not(Restrictions.eq("voided", true)));
+		return criteria;
+	}
+
 }

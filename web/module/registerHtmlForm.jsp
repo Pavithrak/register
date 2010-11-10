@@ -1,6 +1,6 @@
 <%@ include file="/WEB-INF/template/include.jsp" %>
 
-<openmrs:require privilege="Manage Register Patients" otherwise="/login.htm" redirect="/module/register/registerEntry.list" />
+<openmrs:require privilege="Manage Register Entries" otherwise="/login.htm" redirect="/module/register/registerEntry.list" />
 
 <c:set var="OPENMRS_DO_NOT_SHOW_PATIENT_SET" scope="request" value="true"/>
 <c:set var="pageFragment" value="${param.pageFragment != null && param.pageFragment}"/>
@@ -151,13 +151,13 @@
 	</spring:hasBindErrors>
 </c:if>
 
-<c:if test="${command.map['session'].context.mode != 'VIEW'}">
-	<form id="htmlform" method="post" onSubmit="submitHtmlForm(); return false;">
+<form id="htmlform" method="post" onSubmit="submitHtmlForm(); return false;">
+	<c:if test="${command.map['session'].context.mode != 'VIEW'}">
 		<input type="hidden" name="personId" value="${ command.map['session'].patient.personId }"/>
 		<input type="hidden" name="htmlFormId" value="${ command.map['session'].htmlFormId }"/>
 		<input type="hidden" name="formModifiedTimestamp" value="${ command.map['session'].formModifiedTimestamp }"/>		
 		<input type="hidden" name="closeAfterSubmission" value="${param.closeAfterSubmission}"/>
-</c:if>
+	</c:if>
 	
 	${command.map['session'].htmlToDisplay}
 	
