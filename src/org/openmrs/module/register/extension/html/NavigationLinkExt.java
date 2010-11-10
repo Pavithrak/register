@@ -25,7 +25,7 @@ public class NavigationLinkExt extends LinkExt {
 
 	@Override
 	public String getRequiredPrivilege() {
-		return RegisterConstant.PRIVILEGE_REGISTER_FULL_ACCESS;
+		return RegisterConstant.VIEW_REGISTER_ENTRIES;
 	}
 
 	@Override

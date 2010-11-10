@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/template/include.jsp"%>
-<openmrs:require privilege="View Registers" otherwise="/login.htm" redirect="/module/register/manageRegister.list" />
+<openmrs:require privilege="View Register Entries" otherwise="/login.htm" redirect="/module/register/manageRegister.list" />
 
 <spring:message var="pageTitle" code="register.manage.page.title" scope="page" />
 
@@ -43,7 +43,78 @@
 </script>
 
 <br />
-<openmrs:hasPrivilege privilege="Manage Register Patients">
+<input type="hidden" id="registerCount" value='1' />
+<input type="hidden" id="currentPage" value='1' />
+<input type="hidden" id="total_pages" value='1' />
+
+<div id="registerLocationPanel">
+	<b class="boxHeader"><spring:message code="register.title" /> </b>
+	<div class="box">
+		<table cellspacing="0" cellpadding="3">
+			<tr>
+				<th>
+					<spring:message code="register.title" />
+				</th>
+				<td>
+					<div id="registerPanel"></div>
+				</td>
+			</tr>
+			<tr>
+				<th>
+					<spring:message code="register.location.list.title" />
+				</th>
+				<td>
+					<select name="locationId" id="locationId">
+						<option value="-1">
+							<spring:message code="register.location.select" />
+						</option>
+						<c:forEach var="location" items="${commandMap.map['locations'] }">
+						<option value="${ location.locationId }">${ location.name }</option>
+						</c:forEach>
+					</select>
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
+<br />
+
+<div id="resultPanel"  style="display:none">
+	<b class="boxHeader"><div id="locationName"></div></b>
+	<div id="registerData" class="box">
+		<table width="100%">
+			<tbody>
+				<tr>
+					<td align="left">
+						Show
+						<select id="noOfItems" onChange="pageSizeChange();">
+							<option value="2">2</option>
+							<option value="5">5</option>
+							<option value="10">10</option>
+						</select>
+						entries
+					</td>
+				</tr>
+			</tbody>
+		</table>
+
+        	<table cellspacing="0" cellpadding="2" style="width: 100%;" class="openmrsSearchTable">
+			<thead id="searchresultheaders">
+			</thead>
+			<tbody id="Searchresult">
+			</tbody>
+		</table>
+
+		<div id="locationBoxNav" class="dataTables_info"></div>
+		<div id="searchNav" align="center" style="padding: 15px;">
+			<div id='previous' align="center" class="paginate_enabled_previous"	onClick="previousPage();"></div>
+			<div id='next' align="center" class="paginate_disabled_next" onClick="nextPage();"></div>
+		</div>
+	</div>
+</div>
+<br />
+
+<openmrs:hasPrivilege privilege="Manage Register Entries">
 
 	<openmrs:htmlInclude file="/scripts/dojoConfig.js"></openmrs:htmlInclude>
 	<openmrs:htmlInclude file="/scripts/dojo/dojo.js"></openmrs:htmlInclude>
@@ -81,106 +152,34 @@
 			}
 	</script>
 
-	<div id="registerLocationPanel">
-		<b class="boxHeader"><spring:message code="register.title" /> </b>
+	<div id="findPatientPanel"  style="display:none">
+		<b class="boxHeader"><spring:message code="register.findPatient" /></b>
 		<div class="box">
-			<table cellspacing="0" cellpadding="3">
-				<tr>
-					<th>
-						<spring:message code="register.title" />
-					</th>
-					<td>
-						<div id="registerPanel"></div>
-					</td>
-				</tr>
-				<tr>
-					<th>
-						<spring:message code="register.location.list.title" />
-					</th>
-					<td>
-						<select name="locationId" id="locationId">
-							<option value="-1">
-								<spring:message code="register.location.select" />
-							</option>
-							<c:forEach var="location" items="${commandMap.map['locations'] }">
-							<option value="${ location.locationId }">${ location.name }</option>
-							</c:forEach>
-						</select>
-					</td>
-				</tr>
-			</table>
+			<div dojoType="PatientSearch" widgetId="pSearch"
+				showIncludeVoided="false"
+				searchLabel="<spring:message code="Patient.searchBox" htmlEscape="true"/>"
+				showVerboseListing="false"
+				patientId='<request:parameter name="patientId"/>'
+				searchPhrase='<request:parameter name="phrase"/>'
+				showAddPatientLink='false'
+			</div>
+	
+			<div id="addPatientPanel">
+				<table>
+					<tr>
+						<td>
+							or
+							<a href=""
+								onClick="loadUrlIntoAddRegisterEntryPopup('<spring:message code="register.addPatientToRegister" />','mode=Enter');return false;"><spring:message
+									code="register.addPatientToRegister" />
+							</a>
+						</td>
+					</tr>
+				</table>
+			</div>
 		</div>
 	</div>
-	<br />
-
 </openmrs:hasPrivilege>
-
-<input type="hidden" id="registerCount" value='1' />
-<input type="hidden" id="currentPage" value='1' />
-<input type="hidden" id="total_pages" value='1' />
-
-<div id="resultPanel">
-	<b class="boxHeader"><div id="locationName"></div></b>
-	<div id="registerData" class="box">
-		<table width="100%">
-			<tbody>
-				<tr>
-					<td align="left">
-						Show
-						<select id="noOfItems" onChange="pageSizeChange();">
-							<option value="2">2</option>
-							<option value="5">5</option>
-							<option value="10">10</option>
-						</select>
-						entries
-					</td>
-				</tr>
-			</tbody>
-		</table>
-
-        	<table cellspacing="0" cellpadding="2" style="width: 100%;" class="openmrsSearchTable">
-			<thead id="searchresultheaders">
-			</thead>
-			<tbody id="Searchresult">
-			</tbody>
-		</table>
-
-		<div id="locationBoxNav" class="dataTables_info"></div>
-		<div id="searchNav" align="center" style="padding: 15px;">
-			<div id='previous' align="center" class="paginate_enabled_previous"	onClick="previousPage();"></div>
-			<div id='next' align="center" class="paginate_disabled_next" onClick="nextPage();"></div>
-		</div>
-	</div>
-</div>
-<br />
-
-<div id="findPatientPanel">
-	<b class="boxHeader"><spring:message code="register.findPatient" /></b>
-	<div class="box">
-		<div dojoType="PatientSearch" widgetId="pSearch"
-			showIncludeVoided="false"
-			searchLabel="<spring:message code="Patient.searchBox" htmlEscape="true"/>"
-			showVerboseListing="false"
-			patientId='<request:parameter name="patientId"/>'
-			searchPhrase='<request:parameter name="phrase"/>'
-			showAddPatientLink='false'
-		</div>
-
-		<div id="addPatientPanel">
-			<table>
-				<tr>
-					<td>
-						or
-						<a href=""
-							onClick="loadUrlIntoAddRegisterEntryPopup('<spring:message code="register.addPatientToRegister" />','mode=Enter');return false;"><spring:message
-								code="register.addPatientToRegister" />
-						</a>
-					</td>
-				</tr>
-			</table>
-		</div>
-	</div>
-</div>
 
 <%@ include file="/WEB-INF/template/footer.jsp"%>
 <openmrs:htmlInclude file="/dwr/engine.js" />
@@ -309,7 +308,7 @@
      
 		var tableHeaderHtml = "<tr> ";
 		var headerKeys = [];
-		<openmrs:hasPrivilege privilege="Manage Register Patients">
+		<openmrs:hasPrivilege privilege="Manage Register Entries">
 			tableHeaderHtml += "<th> Edit </th> ";     	
 			headerKeys = headerKeys.concat(editCol);
 		</openmrs:hasPrivilege>
@@ -403,11 +402,13 @@
 	}
 	        
 	function  showFindPatientPanel(){
-		if(isActiveRegister()){
-			$j('#findPatientPanel').show();
-     		}
-		else{
-			hideFindPatientPanel();
+		if($j('#findPatientPanel')){
+			if(isActiveRegister()){
+				$j('#findPatientPanel').show();
+	     		}
+			else{
+				hideFindPatientPanel();
+			}
 		}
 	}
 	
@@ -416,7 +417,9 @@
 	}
 	
 	function  hideFindPatientPanel(){
-		 $j('#findPatientPanel').hide();
+		if($j('#findPatientPanel')){
+		 	$j('#findPatientPanel').hide();
+		}
 	}
 	
 	function  hideResultPanel(){
