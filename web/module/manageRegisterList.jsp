@@ -1,6 +1,6 @@
 <%@ include file="/WEB-INF/template/include.jsp" %>
 
-<openmrs:require privilege="View Registers" otherwise="/login.htm" redirect="/module/register/manageRegister.list"/>
+<openmrs:require privilege="Manage Registers" otherwise="/login.htm" redirect="/module/register/manageRegister.list"/>
 
 <spring:message var="pageTitle" code="register.manage.page.title" scope="page"/>
 
@@ -15,9 +15,7 @@
 </h2>
 </p>
 
-<openmrs:hasPrivilege privilege="Manage Registers">
-    <a href="register.form"><spring:message code="register.create.link"/></a>
-</openmrs:hasPrivilege>
+<a href="register.form"><spring:message code="register.create.link"/></a>
 
 <br/>
 <br/>

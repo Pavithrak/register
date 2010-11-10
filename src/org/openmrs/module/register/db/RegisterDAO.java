@@ -22,18 +22,35 @@ import org.openmrs.module.register.db.hibernate.RegisterType;
 import java.util.List;
 
 public interface RegisterDAO {
-    
-    List<Register> getRegisters(boolean includeRetired);
+
+	List<Register> getRegisters(boolean includeRetired);
 
 	Register getRegister(Integer registerId);
 
-    Register saveRegister(Register register);
+	Register saveRegister(Register register);
 
-    void deleteRegister(Register register);
-    
+	void deleteRegister(Register register);
+
 	List<RegisterType> getRegisterTypes();
 
 	RegisterType getRegisterType(Integer registerTypeId);
 
-	//List<Encounter> getEncounters(Form form, Location location, boolean includeVoided);
+	/**
+	 * Get the list of encounter for a given form and a location. If Location is
+	 * null then all Encounter are retrieved irrespective of their locations
+	 * 
+	 * @param formId
+	 * @param locationId
+	 * @return List<Encounter>
+	 */
+	List<Encounter> getEncounters(Form form, Location location, Integer pageSize, Integer page);
+
+	/**
+	 * Get Encounter Count for a given form and location
+	 * 
+	 * @param form
+	 * @param location
+	 * @return
+	 */
+	Integer getEncounterCount(Form form, Location location);
 }

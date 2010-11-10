@@ -53,7 +53,7 @@ public class RegisterAdminList extends AdministrationSectionExt {
      */
     @Override
     public String getRequiredPrivilege() {
-	    return RegisterConstant.PRIVILEGE_REGISTER_FULL_ACCESS;
+	    return RegisterConstant.MANAGE_REGISTERS;
     }
 	
 }

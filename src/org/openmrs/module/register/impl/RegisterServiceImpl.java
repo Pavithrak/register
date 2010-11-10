@@ -13,19 +13,18 @@
  */
 package org.openmrs.module.register.impl;
 
+import java.util.List;
+
 import org.openmrs.Encounter;
 import org.openmrs.Form;
 import org.openmrs.Location;
-import org.openmrs.api.EncounterService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.register.RegisterService;
+import org.openmrs.module.register.db.RegisterDAO;
 import org.openmrs.module.register.db.hibernate.Register;
 import org.openmrs.module.register.db.hibernate.RegisterType;
-import org.openmrs.module.register.db.RegisterDAO;
-
-import java.util.List;
 
 public class RegisterServiceImpl extends BaseOpenmrsService implements RegisterService{
     private RegisterDAO dao;
@@ -68,24 +67,39 @@ public class RegisterServiceImpl extends BaseOpenmrsService implements RegisterS
 	@Override
 	public List<Encounter> getEncountersForRegisterByLocation(Integer registerId, Integer locationId, Integer pageSize, Integer page) {
 		Location location=null;
-		EncounterService encounterService = Context.getEncounterService();
+		
 		Register register = getRegister(registerId);
 		Form form = register.getHtmlForm().getForm();
 		LocationService locationService=Context.getLocationService();
 		location=locationService.getLocation(locationId);
-		return encounterService.getEncounters(form, location, pageSize, page);
+		return dao.getEncounters(form, location, pageSize, page);
 	}
 	
 	@Override
 	public Integer getEncounterCountForRegisterByLocation(Integer registerId, Integer locationId) {
 		Location location=null;
-		EncounterService encounterService = Context.getEncounterService();
+		
 		Register register = getRegister(registerId);
 		Form form = register.getHtmlForm().getForm();
 		LocationService locationService=Context.getLocationService();
 		location=locationService.getLocation(locationId);
-		return encounterService.getEncounterCount(form, location);
+		return dao.getEncounterCount(form, location);
 	}
 	
+	/**
+	 * @see org.openmrs.module.register.RegisterService#getEncounters(org.openmrs.Form, org.openmrs.Location, java.lang.Integer, java.lang.Integer)
+	 */
+	@Override
+	public List<Encounter> getEncounters(Form form, Location location, Integer pageSize, Integer page) {
+		return dao.getEncounters(form, location, pageSize, page);
+	}
 	
+	/**
+	 * @see org.openmrs.module.register.RegisterService#getEncounterCount(org.openmrs.Form, org.openmrs.Location)
+	 */
+	@Override
+	public Integer getEncounterCount(Form form, Location location){
+		return dao.getEncounterCount(form, location);
+	}
+
 }

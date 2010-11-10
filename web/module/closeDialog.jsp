@@ -2,7 +2,7 @@
 <%@ include file="/WEB-INF/template/headerMinimal.jsp" %>
 
 <script type="text/javascript">
-$j("#displayAddRegisterEntryPopup").dialog("close");
+	parent.$j("#displayAddRegisterEntryPopup").dialog("close");
 </script> 
 
 <%@ include file="/WEB-INF/template/headerMinimal.jsp" %>

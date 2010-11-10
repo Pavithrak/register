@@ -4,7 +4,7 @@
 				code="admin.title.short" />
 		</a>
 	</li>
-	<openmrs:hasPrivilege privilege="View Registers,Manage Registers">
+	<openmrs:hasPrivilege privilege="Manage Registers">
 		<li
 			<c:if test='<%= request.getRequestURI().contains("module/register/manageRegisterList") %>'>class="active"</c:if>>
 			<a
