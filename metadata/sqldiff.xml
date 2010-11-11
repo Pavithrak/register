@@ -76,12 +76,20 @@
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 			UPDATE registers SET uuid = UUID() WHERE uuid is null;
+			
+			CREATE UNIQUE INDEX registers_uuid_index ON registers (uuid);
 
 			insert into `register_type` (`register_type_id`, `name`, `description`,	`creator`, `date_created`, `retired`, `uuid`) 
 								 values (NULL, 'Visit Register', 'Visit Register', '1', '2010-09-25', '0', UUID());
 								 
 			insert into `register_type` (`register_type_id`, `name`, `description`,	`creator`, `date_created`, `retired`, `uuid`) 
 								 values (NULL, 'Program Register', 'Program Register', '1', '2010-09-25', '0', UUID());
+								 
+			insert into `privilege` (`privilege`, `description`, `uuid`) values ('Manage Registers', 'Able to add/edit/delete Register', UUID());
+
+			insert into `privilege` (`privilege`, `description`, `uuid`) values ('View Register Entries', 'Able to view Register patient and encounter entries', UUID());
+			
+			insert into `privilege` (`privilege`, `description`, `uuid`) values ('Manage Register Entries', 'Able to add/edit/delete record of Patient and Encounter associated with the Register', UUID());			
 		</sql>
 	</diff>
 </sqldiff>
