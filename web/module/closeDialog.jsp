@@ -11,8 +11,8 @@
 	session.removeAttribute(WebConstants.OPENMRS_ERROR_ARGS);
 %>
 
-<script type="text/javascript">
-	alert('Record saved successfully');
+<script type="text/javascript">	
 	parent.$j("#displayAddRegisterEntryPopup").dialog("close");
+	alert('Record saved successfully');
 </script> 
 

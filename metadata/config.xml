@@ -16,7 +16,7 @@
 	<require_version>1.6.0.11652</require_version>
 
 	<require_modules>
-		<require_module>org.openmrs.module.htmlformentry</require_module>
+		<require_module version="1.7.1">org.openmrs.module.htmlformentry</require_module>
 	</require_modules>
 
 	<!-- Extensions -->

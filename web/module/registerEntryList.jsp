@@ -399,11 +399,11 @@
 		</c:forEach>
 
 		if(activeGroup.length>0){
-			 registerCoactiveGroupmboHtml =registerCoactiveGroupmboHtml + '<optgroup label="active">'+ activeGroup + '</optgroup>'
+			 registerCoactiveGroupmboHtml =registerCoactiveGroupmboHtml + '<optgroup label="Active">'+ activeGroup + '</optgroup>'
 		}
 
 		if(retiredGroup.length>0){
-			registerCoactiveGroupmboHtml=registerCoactiveGroupmboHtml+ '<optgroup label="retired">' + retiredGroup +'</optgroup>'
+			registerCoactiveGroupmboHtml=registerCoactiveGroupmboHtml+ '<optgroup label="Retired">' + retiredGroup +'</optgroup>'
 		}
 
 		registerCoactiveGroupmboHtml +='</select>';						
