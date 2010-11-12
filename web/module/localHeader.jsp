@@ -1,3 +1,10 @@
+<openmrs:htmlInclude file="/moduleResources/htmlformentry/jquery-ui-1.8.2.custom.css" />
+<openmrs:htmlInclude file="/moduleResources/htmlformentry/jquery-1.4.2.min.js" />
+<openmrs:htmlInclude file="/moduleResources/htmlformentry/jquery-ui-1.8.2.custom.min.js" />
+<script type="text/javascript">
+	$j = jQuery.noConflict();
+</script>
+
 <ul id="menu">
 	<li class="first">
 		<a href="${pageContext.request.contextPath}/admin"><spring:message

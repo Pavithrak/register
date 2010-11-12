@@ -1,6 +1,16 @@
 <%@ include file="/WEB-INF/template/include.jsp"%>
 <openmrs:require privilege="View Register Entries" otherwise="/login.htm" redirect="/module/register/manageRegister.list" />
 
+<openmrs:htmlInclude file="/moduleResources/htmlformentry/jquery-ui-1.8.2.custom.css" />
+<openmrs:htmlInclude file="/moduleResources/htmlformentry/jquery-1.4.2.min.js" />
+<openmrs:htmlInclude file="/moduleResources/htmlformentry/jquery-ui-1.8.2.custom.min.js" />
+<script type="text/javascript">
+	$j = jQuery.noConflict();
+</script>
+<openmrs:htmlInclude file="/scripts/dojoConfig.js"></openmrs:htmlInclude>
+<openmrs:htmlInclude file="/scripts/dojo/dojo.js"></openmrs:htmlInclude>
+
+
 <spring:message var="pageTitle" code="register.manage.page.title" scope="page" />
 
 <%@ include file="/WEB-INF/template/header.jsp"%>
@@ -116,9 +126,6 @@
 
 <openmrs:hasPrivilege privilege="Manage Register Entries">
 
-	<openmrs:htmlInclude file="/scripts/dojoConfig.js"></openmrs:htmlInclude>
-	<openmrs:htmlInclude file="/scripts/dojo/dojo.js"></openmrs:htmlInclude>
-
 	<script type="text/javascript">
 			dojo.require("dojo.widget.openmrs.PatientSearch");
 			
@@ -138,15 +145,19 @@
 					}
 				);
 				
-				<c:if test="${empty hideAddNewPatient}">
-					searchWidget.addPatientLink ='<a href="" onClick="loadUrlIntoAddRegisterEntryPopup(\'<spring:message code="register.addPatientToRegister" />\',\'mode=Enter\');return false;"><spring:message code="register.addPatientToRegister" /></a>';
-				</c:if>
-				searchWidget.inputNode.select();
+				if(searchWidget){
+					<c:if test="${empty hideAddNewPatient}">
+						searchWidget.addPatientLink ='<a href="" onClick="loadUrlIntoAddRegisterEntryPopup(\'<spring:message code="register.addPatientToRegister" />\',\'mode=Enter\');return false;"><spring:message code="register.addPatientToRegister" /></a>';
+					</c:if>				
+					searchWidget.inputNode.select();
+				}
 				changeClassProperty("description", "display", "none");
 			}
 			
-			function clearSearch(searchWidget){				
-				searchWidget.clearSearch();
+			function clearSearch(searchWidget){
+				if(searchWidget){				
+					searchWidget.clearSearch();
+				}
 				$j('#searchInfoBar').html("");
 				$j('#searchPagingBar').html("");
 			}
@@ -161,7 +172,7 @@
 				showVerboseListing="false"
 				patientId='<request:parameter name="patientId"/>'
 				searchPhrase='<request:parameter name="phrase"/>'
-				showAddPatientLink='false'
+				showAddPatientLink='false'>
 			</div>
 	
 			<div id="addPatientPanel">

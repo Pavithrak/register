@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
-@RequestMapping(value = "module/register/manageRegister.list")
+@RequestMapping(value = "/module/register/manageRegister.list")
 public class ManageRegisterListController {
 
 	/** Logger for this class and subclasses */

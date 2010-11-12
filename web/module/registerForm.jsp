@@ -189,14 +189,14 @@
 	
 	function onDelete() {
             if (confirm('<spring:message code="register.confirm.delete"/>'+'\n\n'+'<spring:message code="register.confirm.deleteNote"/>')) {
-        			$j("#action").val('deleteRegister');
-        			 $j("#createForm").submit();    
+			$j('#action').val('deleteRegister');
+			$j('#createForm').submit();    
             }
         }
         
    function onSave(){
-        	$j("#action").val('saveRegister');
-            $j("#createForm").submit();
+		$j('#action').val('saveRegister');
+		$j('#createForm').submit();
         }
 </script>
 

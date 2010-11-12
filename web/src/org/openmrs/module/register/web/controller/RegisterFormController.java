@@ -42,10 +42,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.servlet.ModelAndView;
 
 @Controller
-@RequestMapping(value = "module/register/register.form")
+@RequestMapping(value = "/module/register/register.form")
 public class RegisterFormController {
 
 	/** Logger for this class and subclasses */

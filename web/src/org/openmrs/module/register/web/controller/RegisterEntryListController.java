@@ -13,9 +13,9 @@
  */
 package org.openmrs.module.register.web.controller;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.LinkedHashMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
-@RequestMapping(value = "module/register/registerEntry.list")
+@RequestMapping(value = "/module/register/registerEntry.list")
 public class RegisterEntryListController {
 
 	/** Logger for this class and subclasses */

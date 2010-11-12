@@ -15,53 +15,31 @@ package org.openmrs.module.register;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openmrs.module.BaseModuleActivator;
+import org.openmrs.module.Activator;
 
 /**
  * This class contains the logic that is run every time this module is either
  * started or shutdown
  */
-public class RegisterModuleActivator extends BaseModuleActivator {
+public class RegisterModuleActivator implements Activator {
 
 	private Log log = LogFactory.getLog(this.getClass());
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Logs that module has been started
 	 * 
-	 * @see org.openmrs.module.BaseModuleActivator#started()
+	 * @see org.openmrs.module.Activator#startup()
 	 */
-	@Override
-	public void started() {
-		log.info("Register Module Started");
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openmrs.module.BaseModuleActivator#stopped()
-	 */
-	@Override
-	public void stopped() {
-		log.info("Register Module Stoped");
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openmrs.module.BaseModuleActivator#willStart()
-	 */
-	@Override
-	public void willStart() {
+	public void startup() {
 		log.info("Starting Register Module");
 	}
-
-	/*
-	 * (non-Javadoc)
+	
+	/**
+	 * Logs that module has been stopped
 	 * 
-	 * @see org.openmrs.module.BaseModuleActivator#willStop()
+	 *  @see org.openmrs.module.Activator#shutdown()
 	 */
-	@Override
-	public void willStop() {
-		log.info("Stoping Register Module");
+	public void shutdown() {
+		log.info("Shutting down Register Module");
 	}
 }
