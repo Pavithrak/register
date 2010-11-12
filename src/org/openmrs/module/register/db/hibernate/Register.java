@@ -78,9 +78,7 @@ public class Register extends BaseOpenmrsMetadata {
 	@Override
 	public String toString() {
 		return "Register [RegisterId=" + registerId + ", Name=" + getName() + ", Description=" + getDescription() + ", registerTypeId="
-				+ registerType.getRegisterTypeId() + ", htmlFormId=" 
-				+ htmlForm.getId() 
-				+ ", StartDate=" + startDate + ", EndDate=" + endDate
+				+ registerType.getRegisterTypeId() + ", htmlFormId=" + htmlForm.getId() + ", StartDate=" + startDate + ", EndDate=" + endDate
 				+ ", Retired=" + getRetired() + "]";
 	}
 }

@@ -138,15 +138,19 @@
 					}
 				);
 				
-				<c:if test="${empty hideAddNewPatient}">
-					searchWidget.addPatientLink ='<a href="" onClick="loadUrlIntoAddRegisterEntryPopup(\'<spring:message code="register.addPatientToRegister" />\',\'mode=Enter\');return false;"><spring:message code="register.addPatientToRegister" /></a>';
-				</c:if>
-				searchWidget.inputNode.select();
+				if(searchWidget){
+					<c:if test="${empty hideAddNewPatient}">
+						searchWidget.addPatientLink ='<a href="" onClick="loadUrlIntoAddRegisterEntryPopup(\'<spring:message code="register.addPatientToRegister" />\',\'mode=Enter\');return false;"><spring:message code="register.addPatientToRegister" /></a>';
+					</c:if>				
+					searchWidget.inputNode.select();
+				}
 				changeClassProperty("description", "display", "none");
 			}
 			
-			function clearSearch(searchWidget){				
-				searchWidget.clearSearch();
+			function clearSearch(searchWidget){
+				if(searchWidget){				
+					searchWidget.clearSearch();
+				}
 				$j('#searchInfoBar').html("");
 				$j('#searchPagingBar').html("");
 			}
@@ -161,7 +165,7 @@
 				showVerboseListing="false"
 				patientId='<request:parameter name="patientId"/>'
 				searchPhrase='<request:parameter name="phrase"/>'
-				showAddPatientLink='false'
+				showAddPatientLink='false'>
 			</div>
 	
 			<div id="addPatientPanel">
@@ -307,8 +311,8 @@
 			}
 			else {
 				value = typeof(registryRowData[key]) == 'undefined' ? "" : registryRowData[key];	    	
-		    	}						    
-			    html += '<td>' + value + '</td>';						    
+			}						    
+			html += '<td>' + value + '</td>';						    
 		}) 	
 		return html;
 	}
@@ -321,9 +325,11 @@
 		var tableHeaderHtml = "<tr> ";
 		var headerKeys = [];
 		<openmrs:hasPrivilege privilege="Manage Register Entries">
-			tableHeaderHtml += "<th> Edit </th> ";     	
-			tableHeaderHtml += "<th> Delete </th> ";     	
-			headerKeys = headerKeys.concat(["edit", "delete"]);
+			if (isActiveRegister()){
+				tableHeaderHtml += "<th> Edit </th> ";     	
+				tableHeaderHtml += "<th> Delete </th> ";     	
+				headerKeys = headerKeys.concat(["edit", "delete"]);
+			}
 		</openmrs:hasPrivilege>
 		
 		headerData = addHeaders(registerEntries['headers']);
@@ -388,11 +394,11 @@
 		</c:forEach>
 
 		if(activeGroup.length>0){
-			 registerCoactiveGroupmboHtml =registerCoactiveGroupmboHtml + '<optgroup label="active">'+ activeGroup + '</optgroup>'
+			 registerCoactiveGroupmboHtml =registerCoactiveGroupmboHtml + '<optgroup label="Active">'+ activeGroup + '</optgroup>'
 		}
 
 		if(retiredGroup.length>0){
-			registerCoactiveGroupmboHtml=registerCoactiveGroupmboHtml+ '<optgroup label="retired">' + retiredGroup +'</optgroup>'
+			registerCoactiveGroupmboHtml=registerCoactiveGroupmboHtml+ '<optgroup label="Retired">' + retiredGroup +'</optgroup>'
 		}
 
 		registerCoactiveGroupmboHtml +='</select>';						
@@ -406,7 +412,7 @@
 	        
 	function isActiveRegister(){
      	var label=$j("#registerId option:selected").parents("optgroup").attr("label"); 
-		if(label=='active'){
+		if(label=='Active'){
 			return true;
 		}
 		else{

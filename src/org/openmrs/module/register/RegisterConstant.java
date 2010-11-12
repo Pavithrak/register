@@ -23,5 +23,5 @@ public class RegisterConstant {
 	public static final String VIEW_REGISTER_ENTRIES = "View Register Entries";
 
 	@AddOnStartup(description = "Able to add/edit/delete record of Patient and Encounter associated with the Register")
-	public static final String MANAGE_REGISTER_PATIENTS = "Manage Register Entries";
+	public static final String MANAGE_REGISTER_ENTRIES = "Manage Register Entries";
 }
