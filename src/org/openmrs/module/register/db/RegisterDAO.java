@@ -13,13 +13,13 @@
  */
 package org.openmrs.module.register.db;
 
+import java.util.List;
+
 import org.openmrs.Encounter;
 import org.openmrs.Form;
 import org.openmrs.Location;
 import org.openmrs.module.register.db.hibernate.Register;
 import org.openmrs.module.register.db.hibernate.RegisterType;
-
-import java.util.List;
 
 public interface RegisterDAO {
 
@@ -53,4 +53,6 @@ public interface RegisterDAO {
 	 * @return
 	 */
 	Integer getEncounterCount(Form form, Location location);
+
+	void deleteEncounter(Integer encounterId);
 }

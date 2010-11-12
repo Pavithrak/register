@@ -271,6 +271,13 @@
 		DWRRegisterService.getRegisterEntriesByLocation($j('#registerId').val(),$j('#locationId').val(),$j('#noOfItems').val(),$j('#currentPage').val(),fillDataInTable);
 	}
 	
+	function deleteEncounter(encounterID) {
+		if(confirm('You are about to remove an encounter from this register. Are you sure?')) {
+			DWRRegisterService.deleteEncounter(encounterID);
+			reloadView();
+		}
+	}
+	
 	function showRegisterContent(){
 		if($j('#locationId').val()!=-1 && $j('#registerId').val()!=-1){
 			showResultPanel();
@@ -302,6 +309,12 @@
 				value = '<a href="" onClick="loadUrlIntoAddRegisterEntryPopup(\'<spring:message code="register.edit" />\',\'mode=Edit&encounterId=' + encounterID + '\');return false;">' +  
 								'<img src="${pageContext.request.contextPath}/images/edit.gif" title="<spring:message code="general.edit"/>" border="0" align="top" />' +
 							'</a>'
+			} else if(key == 'delete') {
+				var encounterID = registryRowData['encounterId'];
+				value = '<input type="image" alt="Delete" title="Delete Encounter From Register" ' + 
+					'onclick="deleteEncounter(' + encounterID + ');" ' + 
+					'name="delete" ' + 
+					'src="${pageContext.request.contextPath}/images/trash.gif">'
 			}
 			else {
 				value = typeof(registryRowData[key]) == 'undefined' ? "" : registryRowData[key];	    	
@@ -312,7 +325,6 @@
 	}
 	
 	function constructRegisterTable(){
-		var editCol = ["edit"];
 		var page_index = $j('#currentPage').val();
 		var items_per_page = $j('#noOfItems').val();
 		// Get number of elements per pagionation page from form
@@ -321,7 +333,8 @@
 		var headerKeys = [];
 		<openmrs:hasPrivilege privilege="Manage Register Entries">
 			tableHeaderHtml += "<th> Edit </th> ";     	
-			headerKeys = headerKeys.concat(editCol);
+			tableHeaderHtml += "<th> Delete </th> ";     	
+			headerKeys = headerKeys.concat(["edit", "delete"]);
 		</openmrs:hasPrivilege>
 		
 		headerData = addHeaders(registerEntries['headers']);

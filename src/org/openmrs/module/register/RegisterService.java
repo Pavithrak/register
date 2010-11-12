@@ -97,4 +97,8 @@ public interface RegisterService {
 	@Authorized( { RegisterConstant.VIEW_REGISTER_ENTRIES })
 	public Integer getEncounterCount(Form form, Location location);
 
+	@Transactional
+	@Authorized( { RegisterConstant.MANAGE_REGISTER_ENTRIES })
+	public void deleteEncounter(Integer encounterId);
+
 }

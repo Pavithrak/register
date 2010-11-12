@@ -102,4 +102,9 @@ public class RegisterServiceImpl extends BaseOpenmrsService implements RegisterS
 		return dao.getEncounterCount(form, location);
 	}
 
+	@Override
+	public void deleteEncounter(Integer encounterId) {
+		dao.deleteEncounter(encounterId);
+	}
+
 }

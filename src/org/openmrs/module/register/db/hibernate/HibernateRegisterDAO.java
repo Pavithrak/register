@@ -24,6 +24,7 @@ import org.hibernate.criterion.Restrictions;
 import org.openmrs.Encounter;
 import org.openmrs.Form;
 import org.openmrs.Location;
+import org.openmrs.module.htmlformentry.HtmlForm;
 import org.openmrs.module.register.db.RegisterDAO;
 
 public class HibernateRegisterDAO implements RegisterDAO {
@@ -51,6 +52,20 @@ public class HibernateRegisterDAO implements RegisterDAO {
 	}
 
 	public Register saveRegister(Register register) {
+		HtmlForm htmlForm = register.getHtmlForm();
+		if(htmlForm.getId() == null) {
+			Form form = htmlForm.getForm();
+			if(form.getId() == null) {
+				getCurrentSession().save(form);
+			}
+			getCurrentSession().save(htmlForm);
+		}
+		
+		RegisterType registerType = register.getRegisterType();
+		if(registerType.getId() == null) {
+			getCurrentSession().save(registerType);
+		}
+		
 		getCurrentSession().saveOrUpdate(register);
 		return register;
 	}
@@ -75,10 +90,7 @@ public class HibernateRegisterDAO implements RegisterDAO {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Encounter> getEncounters(Form form,	Location location, Integer pageSize, Integer page) {
-		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(
-				Encounter.class);
-		criteria.add(Restrictions.eq("form", form));
-		criteria.add(Restrictions.eq("location", location));
+		Criteria criteria = baseEncounterCriteria(form, location);
 		criteria.addOrder(Order.asc("encounterDatetime"));
 		criteria.addOrder(Order.asc("dateCreated"));
 		criteria.setFirstResult((page - 1) * pageSize);
@@ -91,13 +103,26 @@ public class HibernateRegisterDAO implements RegisterDAO {
 	 */
 	@Override
 	public Integer getEncounterCount(Form form, Location location) {
-		
+		Criteria criteria = baseEncounterCriteria(form, location);
+		criteria.setProjection(Projections.rowCount());
+		return (Integer)criteria.list().get(0);
+	}
+
+	@Override
+	public void deleteEncounter(Integer encounterId) {
+		Session session = sessionFactory.getCurrentSession();
+		Encounter encounter = (Encounter) session.load(Encounter.class, encounterId);
+		encounter.setVoided(true);
+		session.update(encounter);
+	}
+
+	private Criteria baseEncounterCriteria(Form form, Location location) {
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(
 				Encounter.class);
 		criteria.add(Restrictions.eq("form", form));
 		criteria.add(Restrictions.eq("location", location));
-		criteria.setProjection(Projections.rowCount());
-		return (Integer)criteria.list().get(0);
+		criteria.add(Restrictions.not(Restrictions.eq("voided", true)));
+		return criteria;
 	}
 
 }
