@@ -22,6 +22,8 @@
 <link href="/openmrs/scripts/jquery/dataTables/css/dataTables.css?v=1.8.0.0" type="text/css" rel="stylesheet" />
 
 <script type="text/javascript">
+	var mode = null;
+	
 	$j(document).ready(function() {
 		$j('#displayAddRegisterEntryPopup').dialog({
 				title: 'dynamic',
@@ -37,7 +39,8 @@
 		});
 	});
 
-	function loadUrlIntoAddRegisterEntryPopup(title, param) {
+	function loadUrlIntoAddRegisterEntryPopup(title, param, entryMode) {
+		mode = entryMode;
 		var urlToLoad = "/openmrs/module/register/registerHtmlForm.form?closeAfterSubmission=close&inPopup=true&registerId=";
 
 		urlToLoad += $j('#registerId').val();
@@ -117,7 +120,7 @@
 
 		<div id="locationBoxNav" class="dataTables_info"></div>
 		<div id="searchNav" align="center" style="padding: 15px;">
-			<div id='previous' align="center" class="paginate_enabled_previous"	onClick="previousPage();"></div>
+			<div id='previous' align="center" class="paginate_disabled_previous" onClick="previousPage();"></div>
 			<div id='next' align="center" class="paginate_disabled_next" onClick="nextPage();"></div>
 		</div>
 	</div>
@@ -215,7 +218,7 @@
 	
 	function togglePaginationButtons(){
 		$j('#next').attr("class","paginate_disabled_next");
-		if(Number($j('#registerCount').val())<Number($j('#noOfItems').val())){
+		if(Number($j('#currentPage').val())== 1 || (Number($j('#registerCount').val())<Number($j('#noOfItems').val())) ){
 			$j('#previous').attr("class","paginate_disabled_previous");
 		}
 		else{
@@ -282,7 +285,12 @@
 		if($j('#locationId').val()!=-1 && $j('#registerId').val()!=-1){
 			showResultPanel();
 			showFindPatientPanel();
-			reloadView();
+			if(mode && mode.toUpperCase() == 'EDIT'){
+				reloadViewData();
+			}
+			else{
+				reloadView();
+			}
 		}
 		else{
 			hideResultPanel();
@@ -306,7 +314,7 @@
 			if(key == 'edit'){
 				var encounterID = registryRowData['encounterId'];
 			
-				value = '<a href="" onClick="loadUrlIntoAddRegisterEntryPopup(\'<spring:message code="register.edit" />\',\'mode=Edit&encounterId=' + encounterID + '\');return false;">' +  
+				value = '<a href="" onClick="loadUrlIntoAddRegisterEntryPopup(\'<spring:message code="register.edit" />\',\'mode=Edit&encounterId=' + encounterID + '\',\'EDIT\');return false;">' +  
 								'<img src="${pageContext.request.contextPath}/images/edit.gif" title="<spring:message code="general.edit"/>" border="0" align="top" />' +
 							'</a>'
 			} else if(key == 'delete') {
@@ -377,8 +385,10 @@
 			var start_index = ((page_index - 1) * items_per_page) + 1;
 			var end_index = ((page_index - 1) * items_per_page)+ registerEntries['registerViewResults'].length;
 			$j('#locationBoxNav').html("Viewing <b>" + start_index+ "-" + end_index+ "</b> of <b>" + $j('#registerCount').val() + "</b>");
+			$j('#searchNav').show();
 		}else{
 			$j('#locationBoxNav').html("");
+			$j('#searchNav').hide();
 		}
 		// Prevent click event propagation
 		return false;
