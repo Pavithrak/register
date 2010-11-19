@@ -13,6 +13,7 @@ import org.openmrs.util.Format;
 public class RegisterEntry {
 	
 	private String personName;
+	private String personId;
 	private String gender;
 	private String dateOfBirth;
 	private String encounterId;
@@ -24,6 +25,7 @@ public class RegisterEntry {
 		Patient patient = encounter.getPatient();
 		
 		personName = patient.getGivenName();
+		personId = patient.getPatientId() + "";
 		gender = patient.getGender();
 		dateOfBirth = Format.format(patient.getBirthdate());
 		encounterId = encounter.getId() + "";
@@ -45,6 +47,14 @@ public class RegisterEntry {
 		this.personName = personName;
 	}
 	
+	public String getPersonId() {
+		return personId;
+	}
+
+	public void setPersonId(String personId) {
+		this.personId = personId;
+	}
+
 	public String getEncounterDate() {
 		return encounterDate;
 	}
