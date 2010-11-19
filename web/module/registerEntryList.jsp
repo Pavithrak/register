@@ -317,6 +317,11 @@
 					'name="delete" ' + 
 					'src="${pageContext.request.contextPath}/images/trash.gif">'
 			}
+			else if( key == 'personName')
+			{
+				
+				value = typeof(registryRowData[key]) == 'undefined' ? "" : '<a href="../../patientDashboard.form?patientId='+ registryRowData['personId']  +'" target="_blank" >' + registryRowData[key] + '</a>';
+			}
 			else {
 				value = typeof(registryRowData[key]) == 'undefined' ? "" : registryRowData[key];	    	
 			}						    
