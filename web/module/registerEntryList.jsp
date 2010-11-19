@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/template/include.jsp"%>
-<openmrs:require privilege="View Register Entries" otherwise="/login.htm" redirect="/module/register/manageRegister.list" />
+<openmrs:require privilege="View Register Entries" otherwise="/login.htm" redirect="/module/register/registerEntry.list" />
 
 <openmrs:htmlInclude file="/moduleResources/htmlformentry/jquery-ui-1.8.2.custom.css" />
 <openmrs:htmlInclude file="/moduleResources/htmlformentry/jquery-1.4.2.min.js" />
@@ -147,7 +147,7 @@
 				
 				if(searchWidget){
 					<c:if test="${empty hideAddNewPatient}">
-						searchWidget.addPatientLink ='<a href="" onClick="loadUrlIntoAddRegisterEntryPopup(\'<spring:message code="register.addPatientToRegister" />\',\'mode=Enter\');return false;"><spring:message code="register.addPatientToRegister" /></a>';
+						searchWidget.addPatientLink ='<a href="" onClick="loadUrlIntoAddRegisterEntryPopup(\'<spring:message code="register.create.patient" />\',\'mode=Enter\');return false;"><spring:message code="register.create.patient" /></a>';
 					</c:if>				
 					searchWidget.inputNode.select();
 				}
@@ -164,11 +164,11 @@
 	</script>
 
 	<div id="findPatientPanel"  style="display:none">
-		<b class="boxHeader"><spring:message code="register.findPatient" /></b>
+		<b class="boxHeader"><spring:message code="register.addPatientToRegister" /></b>
 		<div class="box">
 			<div dojoType="PatientSearch" widgetId="pSearch"
 				showIncludeVoided="false"
-				searchLabel="<spring:message code="Patient.searchBox" htmlEscape="true"/>"
+				searchLabel="<spring:message code="register.searchbox.label" htmlEscape="true"/>"
 				showVerboseListing="false"
 				patientId='<request:parameter name="patientId"/>'
 				searchPhrase='<request:parameter name="phrase"/>'
@@ -181,8 +181,8 @@
 						<td>
 							or
 							<a href=""
-								onClick="loadUrlIntoAddRegisterEntryPopup('<spring:message code="register.addPatientToRegister" />','mode=Enter');return false;"><spring:message
-									code="register.addPatientToRegister" />
+								onClick="loadUrlIntoAddRegisterEntryPopup('<spring:message code="register.create.patient" />','mode=Enter');return false;"><spring:message
+									code="register.create.patient" />
 							</a>
 						</td>
 					</tr>
@@ -318,8 +318,8 @@
 			}
 			else {
 				value = typeof(registryRowData[key]) == 'undefined' ? "" : registryRowData[key];	    	
-		    	}						    
-			    html += '<td>' + value + '</td>';						    
+			}						    
+			html += '<td>' + value + '</td>';						    
 		}) 	
 		return html;
 	}
@@ -332,9 +332,11 @@
 		var tableHeaderHtml = "<tr> ";
 		var headerKeys = [];
 		<openmrs:hasPrivilege privilege="Manage Register Entries">
-			tableHeaderHtml += "<th> Edit </th> ";     	
-			tableHeaderHtml += "<th> Delete </th> ";     	
-			headerKeys = headerKeys.concat(["edit", "delete"]);
+			if (isActiveRegister()){
+				tableHeaderHtml += "<th> Edit </th> ";     	
+				tableHeaderHtml += "<th> Delete </th> ";     	
+				headerKeys = headerKeys.concat(["edit", "delete"]);
+			}
 		</openmrs:hasPrivilege>
 		
 		headerData = addHeaders(registerEntries['headers']);
@@ -417,7 +419,7 @@
 	        
 	function isActiveRegister(){
      	var label=$j("#registerId option:selected").parents("optgroup").attr("label"); 
-		if(label=='active'){
+		if(label=='Active'){
 			return true;
 		}
 		else{
