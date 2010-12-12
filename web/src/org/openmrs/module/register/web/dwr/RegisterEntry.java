@@ -24,7 +24,7 @@ public class RegisterEntry {
 	public RegisterEntry(Encounter encounter){
 		Patient patient = encounter.getPatient();
 		
-		personName = patient.getGivenName();
+		personName = patient.getGivenName() + " " + patient.getFamilyName();
 		personId = patient.getPatientId() + "";
 		gender = patient.getGender();
 		dateOfBirth = Format.format(patient.getBirthdate());
