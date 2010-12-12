@@ -41,12 +41,14 @@
 
 	function loadUrlIntoAddRegisterEntryPopup(title, param, entryMode) {
 		mode = entryMode;
-		var urlToLoad = "/openmrs/module/register/registerHtmlForm.form?closeAfterSubmission=close&inPopup=true&registerId=";
+		var urlToLoad = "/openmrs/module/register/registerHtmlForm.form?closeAfterSubmission=close&inPopup=true";
 
-		urlToLoad += $j('#registerId').val();
+		urlToLoad = urlToLoad + "&registerId=" + $j('#registerId').val();
+		urlToLoad = urlToLoad + "&locationId=" + $j('#locationId').val();		
 		if(param){
 			urlToLoad = urlToLoad + '&' + param;
-		}
+		}		
+		
 		$j("#displayAddRegisterEntryPopupIframe").attr("src", urlToLoad);
 		$j('#displayAddRegisterEntryPopup')
 			.dialog('option', 'title', title)
@@ -82,7 +84,7 @@
 							<spring:message code="register.location.select" />
 						</option>
 						<c:forEach var="location" items="${commandMap.map['locations'] }">
-						<option value="${ location.locationId }">${ location.name }</option>
+							<option value="${ location.locationId }">${ location.name }</option>
 						</c:forEach>
 					</select>
 				</td>

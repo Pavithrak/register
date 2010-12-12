@@ -4,6 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.openmrs.Encounter;
+import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.htmlformentry.FormEntrySession;
@@ -41,6 +42,13 @@ public class RegisterHtmlFormController extends HtmlFormEntryController {
 		CommandMap commandMap= new CommandMap();
 		
 		String patientIDParam = null;
+		
+		String locationIDParam = request.getParameter("locationId");
+		Location location = null;
+		if (StringUtils.hasText(locationIDParam)){
+			location = Context.getLocationService().getLocation(new Integer(locationIDParam));
+		}
+		
 		String encounterIDParam = request.getParameter("encounterId");
 		if (StringUtils.hasText(encounterIDParam)) {
 			try {
@@ -103,10 +111,10 @@ public class RegisterHtmlFormController extends HtmlFormEntryController {
 		FormEntrySession session;
 		isEncounterEnabled = hasEncouterTag(htmlForm.getXmlData());
 		if (isEncounterEnabled){
-			session = new FormEntrySession(patient, encounter, mode, htmlForm);
+			session = new FormEntrySession(patient, encounter, mode, htmlForm, location);
 		}
 		else{
-			session = new FormEntrySession(patient, htmlForm, mode);
+			session = new FormEntrySession(patient, htmlForm, mode, location);
 		}
 
 		// In case we're not using a sessionForm, we need to check for the case

@@ -71,8 +71,10 @@ public class DWRRegisterService {
 		else if (field instanceof ObsGroup) {
 			// combine all the concepts into one column
 			ObsGroup og = (ObsGroup) field;
-			for (ObsField obsField : og.getChildren()) {
-				fieldHelper(obsField, registerViewResult);
+			for (HtmlFormField htmlFormField : og.getChildren()) {
+				if( htmlFormField instanceof ObsField){
+					fieldHelper(htmlFormField, registerViewResult);
+				}
 			}
 		}
 		else {
