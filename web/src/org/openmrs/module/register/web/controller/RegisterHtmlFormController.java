@@ -137,20 +137,7 @@ public class RegisterHtmlFormController extends HtmlFormEntryController {
 	protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object commandObject, BindException errors)
 			throws Exception {
 		
-		CommandMap commandMap=(CommandMap)commandObject;
-		FormEntrySession session = (FormEntrySession) commandMap.getMap().get("session");
-		if (isEncounterEnabled) {
-			session.prepareForSubmit();
-		}
-		else {
-			session.preparePersonForSubmit();
-		}
-
-		if (session.getContext().getMode() == Mode.ENTER && isPatientCreated
-				&& (session.getSubmissionActions().getPersonsToCreate() == null || session.getSubmissionActions().getPersonsToCreate().size() == 0))
-			throw new IllegalArgumentException("This form is not going to create an Patient");
-
-		ModelAndView resultView = handleSubmit(request, response, session, errors);
+		ModelAndView resultView = super.onSubmit(request, response, ((CommandMap)commandObject).getMap().get("session"), errors);
 		
 		if(!errors.hasErrors()){
 			request.getSession().setAttribute(WebConstants.OPENMRS_MSG_ATTR, "register.record.saved");
@@ -159,16 +146,6 @@ public class RegisterHtmlFormController extends HtmlFormEntryController {
 		return resultView;
 	}
 
-	private boolean hasEncouterTag(String xmlData) {
-		for (String tag : HtmlFormEntryConstants.ENCOUNTER_TAGS) {
-			tag = "<" + tag;
-			if (xmlData.contains(tag)) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
 	@Override
 	protected String getQueryPrameters(HttpServletRequest request,FormEntrySession formEntrySession) {
 		return "?" + request.getQueryString();
