@@ -43,10 +43,10 @@
 	<classpathentry kind="lib" path="lib-common/commons-lang/commons-lang-2.4.jar"/>
 	<classpathentry kind="lib" path="lib-common/h2database/h2-1.2.135.jar"/>
 	<classpathentry kind="lib" path="lib-common/reflectutils/reflectutils-0.9.14.jar"/>
-	<classpathentry kind="lib" path="lib-common/htmlformentrymodule/htmlformentry-1.7.1.jar"/>
 	<classpathentry kind="lib" path="lib-common/velocity/velocity-1.6-beta1.jar"/>
 	<classpathentry kind="lib" path="lib-common/openmrs-api-1.6.2.15986-dev.jar"/>
 	<classpathentry kind="lib" path="lib-common/tests-openmrs-api-1.6.2.15986-dev.jar"/>
 	<classpathentry kind="lib" path="lib-common/web-openmrs-api-1.6.2.15986-dev.jar"/>
+	<classpathentry kind="lib" path="lib-common/htmlformentrymodule/htmlformentry-1.7.2.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>
